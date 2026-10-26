@@ -37,12 +37,12 @@ const COLECOES = [
   },
 ];
 
-// Conta de demonstração com os dados mostrados no Figma (login: João Silva / senha: cinematch)
-const CONTA_DEMO = "joao silva";
+// Conta de demonstração com os dados mostrados no Figma (login: joao.silva@email.com / senha: cinematch)
+const CONTA_DEMO = "joao.silva@email.com";
 const USUARIO_DEMO = {
   nome: "João Silva",
   email: "joao.silva@email.com",
-  senha: "4ec7bc3c3f18c8c62841235d9128ec6c6532bec2d48f29e1323fa921edec36e7",
+  senha: "c2c40e9b22a2d99d46b787be5177ac66d2c8224d54e5101ef4276ae54b1ced0d",
   criadoEm: "2024-01-15",
 };
 
@@ -75,7 +75,9 @@ const store = {
 
 // ---------- Contas de usuário ----------
 // As contas ficam no navegador (localStorage); a senha é guardada como hash SHA-256, nunca em texto puro.
-const chaveUsuario = (nome) => semAcento(nome).trim().replace(/\s+/g, " ");
+// A conta é identificada pelo e-mail (sem diferenciar maiúsculas de minúsculas)
+const chaveUsuario = (email) => email.trim().toLowerCase();
+const emailValido = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
 
 function contas() {
   return { [CONTA_DEMO]: USUARIO_DEMO, ...store.get("usuarios", {}) };
@@ -207,8 +209,31 @@ function ultimaAvaliacao() {
 function icon(name) {
   const def = ICONS[name];
   if (!def) return "";
-  const [size, paths] = def;
-  return `<span class="icon" aria-hidden="true"><svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">${paths}</svg></span>`;
+  const [size, paths, altura = size] = def;
+  return `<span class="icon" aria-hidden="true"><svg viewBox="0 0 ${size} ${altura}" xmlns="http://www.w3.org/2000/svg">${paths}</svg></span>`;
+}
+
+// Submenu da conta: abre ao clicar no avatar/nome e fecha ao clicar fora ou com Esc
+function initMenuConta(raiz) {
+  const toggle = raiz.querySelector(".account-toggle");
+  if (!toggle) return;
+  const menu = raiz.querySelector(".account-dropdown");
+  const definir = (aberto) => {
+    menu.hidden = !aberto;
+    toggle.setAttribute("aria-expanded", aberto);
+    toggle.classList.toggle("open", aberto);
+  };
+  toggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    definir(menu.hidden);
+  });
+  document.addEventListener("click", () => definir(false));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !menu.hidden) {
+      definir(false);
+      toggle.focus();
+    }
+  });
 }
 
 function renderIcons(root = document) {
@@ -232,9 +257,27 @@ function renderChrome() {
       </nav>
       <div class="account">${conta ? `
         <button class="bell" type="button" aria-label="Notificações">${icon("bell-20")}</button>
-        <a class="profile-link" href="perfil.html"><span class="avatar">${esc(iniciais(conta.nome))}</span><span>${esc(conta.nome)}</span></a>` : `
+        <div class="account-menu">
+          <button class="account-toggle" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-conta">
+            <span class="avatar">${esc(iniciais(conta.nome))}</span>
+            <span class="name">${esc(conta.nome)}</span>
+            <span class="chevron">${icon("chevron-down-8")}</span>
+          </button>
+          <div class="account-dropdown" id="menu-conta" role="menu" hidden>
+            <div class="identity-row">
+              <strong>${esc(conta.nome)}</strong>
+              <span>${esc(conta.email || "")}</span>
+            </div>
+            <div class="menu-divider"></div>
+            <a role="menuitem" href="perfil.html">${icon("menu-user-20")}Meu perfil</a>
+            <a role="menuitem" href="avaliacoes.html">${icon("menu-star-20")}Minhas avaliações</a>
+            <div class="menu-divider"></div>
+            <a role="menuitem" href="index.html" data-sair>${icon("menu-logout-20")}Sair</a>
+          </div>
+        </div>` : `
         <a class="btn" href="index.html">Entrar</a>`}
       </div>`;
+    initMenuConta(header);
   }
 
   const authHeader = document.querySelector("header[data-auth]");
@@ -284,8 +327,10 @@ function initAuthForm() {
   if (!form) return;
   const cadastro = form.dataset.authForm === "cadastro";
   const nome = form.querySelector("#nome");
+  const email = form.querySelector("#email");
   const senha = form.querySelector("#senha");
   const erro = form.querySelector(".form-error");
+  const campos = [nome, email, senha].filter(Boolean);
 
   const falhar = (msg, campo) => {
     erro.textContent = msg;
@@ -296,28 +341,42 @@ function initAuthForm() {
       campo.focus();
     }
   };
-  [nome, senha].forEach((c) => c.addEventListener("input", () => {
+  campos.forEach((c) => c.addEventListener("input", () => {
     c.closest(".input").classList.remove("invalid");
     erro.hidden = true;
   }));
 
+  // Olho da senha: alterna entre senha oculta e visível
+  const olho = form.querySelector(".toggle-senha");
+  if (olho) {
+    olho.addEventListener("click", () => {
+      const mostrar = senha.type === "password";
+      senha.type = mostrar ? "text" : "password";
+      olho.classList.toggle("on", mostrar);
+      olho.setAttribute("aria-pressed", mostrar);
+      olho.setAttribute("aria-label", mostrar ? "Ocultar senha" : "Mostrar senha");
+      senha.focus();
+    });
+  }
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const nomeLimpo = nome.value.trim().replace(/\s+/g, " ");
-    const chave = chaveUsuario(nomeLimpo);
+    const nomeLimpo = cadastro ? nome.value.trim().replace(/\s+/g, " ") : "";
+    const chave = chaveUsuario(email.value);
     const todas = contas();
 
-    if (nomeLimpo.length < 3) return falhar("Informe seu nome (pelo menos 3 letras).", nome);
+    if (cadastro && nomeLimpo.length < 3) return falhar("Informe seu nome (pelo menos 3 letras).", nome);
+    if (!emailValido(chave)) return falhar("Informe um e-mail válido, como nome@exemplo.com.", email);
     if (!senha.value) return falhar("Informe sua senha.", senha);
 
     if (cadastro) {
       if (senha.value.length < 6) return falhar("A senha precisa ter pelo menos 6 caracteres.", senha);
-      if (todas[chave]) return falhar("Já existe uma conta com esse nome. Entre ou use outro nome.", nome);
+      if (todas[chave]) return falhar("Já existe uma conta com esse e-mail. Entre ou use outro e-mail.", email);
       const usuarios = store.get("usuarios", {});
-      usuarios[chave] = { nome: nomeLimpo, email: "", senha: await hashSenha(chave, senha.value), criadoEm: hoje() };
+      usuarios[chave] = { nome: nomeLimpo, email: chave, senha: await hashSenha(chave, senha.value), criadoEm: hoje() };
       store.set("usuarios", usuarios);
     } else {
-      if (!todas[chave]) return falhar("Não encontramos uma conta com esse nome. Confira ou cadastre-se.", nome);
+      if (!todas[chave]) return falhar("Não encontramos uma conta com esse e-mail. Confira ou cadastre-se.", email);
       if (todas[chave].senha !== await hashSenha(chave, senha.value)) return falhar("Senha incorreta.", senha);
     }
     store.set("sessao", chave);
@@ -327,7 +386,10 @@ function initAuthForm() {
 
 // Páginas internas exigem login; "Sair" encerra a sessão
 function initSessao() {
-  document.querySelectorAll("[data-sair]").forEach((a) => a.addEventListener("click", () => store.set("sessao", null)));
+  // Delegação de evento: o link "Sair" do submenu só existe depois que o cabeçalho é montado
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("[data-sair]")) store.set("sessao", null);
+  });
   const interna = document.querySelector("header[data-nav]") && !document.body.hasAttribute("data-publico");
   if (interna && !usuarioAtual()) {
     window.location.replace("index.html");

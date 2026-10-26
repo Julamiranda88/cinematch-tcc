@@ -12,8 +12,8 @@
 <body>
   <header data-auth></header>
 
-  <main class="auth">
-    <section class="auth-intro">
+  <main class="auth centered-auth">
+    <section class="auth-hero">
       <h1>Seu próximo filme. Seu próximo <b>match.</b></h1>
       <p>Avalie, descubra, recomende e faça parte de uma comunidade apaixonada por cinema.</p>
       <div class="poster-row">
@@ -24,7 +24,7 @@
       <small>Grandes histórias merecem ser compartilhadas.</small>
     </section>
 
-    <form class="auth-form" data-auth-form="cadastro" novalidate>
+    <form class="auth-card" data-auth-form="cadastro" novalidate>
       <div class="welcome">
         <h2>Crie sua conta</h2>
         <p>Seu próximo filme favorito começa aqui.</p>
@@ -32,6 +32,10 @@
       <div class="field">
         <label for="nome">Nome</label>
         <div class="input"><i data-icon="user-round-20"></i><input id="nome" name="nome" type="text" placeholder="Seu nome completo" autocomplete="name"></div>
+      </div>
+      <div class="field">
+        <label for="email">E-mail</label>
+        <div class="input"><i data-icon="user-round-20"></i><input id="email" name="email" type="email" placeholder="seu@email.com" autocomplete="email"></div>
       </div>
       <div class="field">
         <label for="senha">Senha</label>

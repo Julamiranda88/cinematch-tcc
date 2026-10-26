@@ -16,12 +16,13 @@ O `index.html` precisa ficar junto das pastas `css`, `js` e `img`. Aberto sozinh
 
 Para entrar, crie uma conta em **Cadastre-se** ou use a conta de demonstração:
 
-- **Nome:** João Silva
+- **E-mail:** joao.silva@email.com
 - **Senha:** cinematch
 
 ## Funcionalidades
 
-- Cadastro e login de usuários, com validação e senhas guardadas em hash.
+- Cadastro (nome, e-mail e senha) e login por e-mail, com validação, senhas guardadas em hash e botão para mostrar/ocultar a senha.
+- Submenu da conta (Meu perfil, Minhas avaliações e Sair) ao clicar no avatar.
 - Busca entre 9.742 filmes, com filtros por gênero, nota e década.
 - Página de cada filme com sinopse, direção, elenco e nota da comunidade.
 - Avaliação de 1 a 5 estrelas, com comentário opcional.

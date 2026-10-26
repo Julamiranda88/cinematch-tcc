@@ -26,16 +26,20 @@
 
     <form class="auth-form" data-auth-form="login" novalidate>
       <div class="welcome">
-        <h2>Bem-vindo !</h2>
-        <p>Entre na sua conta e encontre seu próximo filme.</p>
+        <h2>Bem-vindo(a) !</h2>
+        <p>Entre na sua conta com e-mail e senha para encontrar seu próximo filme.</p>
       </div>
       <div class="field">
-        <label for="nome">Nome</label>
-        <div class="input"><i data-icon="user-round-20"></i><input id="nome" name="nome" type="text" placeholder="Seu nome completo" autocomplete="name"></div>
+        <label for="email">E-mail</label>
+        <div class="input"><i data-icon="user-round-20"></i><input id="email" name="email" type="email" placeholder="seu@email.com" autocomplete="email"></div>
       </div>
       <div class="field">
         <label for="senha">Senha</label>
-        <div class="input"><i data-icon="lock-keyhole-20"></i><input id="senha" name="senha" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+        <div class="input">
+          <i data-icon="lock-keyhole-20"></i>
+          <input id="senha" name="senha" type="password" placeholder="••••••••" autocomplete="current-password">
+          <button class="toggle-senha" type="button" aria-label="Mostrar senha" aria-pressed="false"><i data-icon="eye-20"></i></button>
+        </div>
       </div>
       <a class="forgot" href="#">Esqueceu sua senha?</a>
       <p class="form-error" role="alert" hidden></p>

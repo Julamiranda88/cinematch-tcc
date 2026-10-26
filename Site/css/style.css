@@ -99,7 +99,6 @@ h1, h2, h3, p { margin: 0; font-weight: inherit; }
 
 .account { display: flex; align-items: center; gap: 20px; }
 .account .bell { width: 20px; height: 20px; color: var(--muted); background: none; border: 0; padding: 0; }
-.account .profile-link { display: flex; align-items: center; gap: 20px; font-size: 14px; }
 .avatar {
   display: inline-flex;
   align-items: center;
@@ -824,7 +823,8 @@ a.search-bar { color: var(--muted); font-size: 15px; }
   :root { --page-x: 16px; }
   .site-header.app { height: auto; flex-wrap: wrap; gap: 12px; padding-top: 16px; }
   .main-nav { order: 3; width: 100%; height: 48px; overflow-x: auto; }
-  .account .profile-link span:last-child { display: none; }
+  .account-toggle .name { display: none; }
+  .account-toggle { gap: 0; }
   .auth, .about, .movie-detail, .vote-layout, .account-area, .collections, .review-full { flex-direction: column; }
   .auth { align-items: stretch; }
   .auth-intro, .profile-menu, .movie-sheet, .vote-options { width: 100%; }
@@ -925,3 +925,143 @@ a.search-bar { color: var(--muted); font-size: 15px; }
 .table-empty { padding: 28px 24px; border-top: 1px solid var(--border); font-size: 14px; color: var(--muted); }
 .table-empty a { color: var(--accent); }
 .table-empty a:hover { text-decoration: underline; }
+
+/* ---------- Atualização do Figma: acesso, submenu da conta e botões ---------- */
+
+/* Login: olho da senha */
+.toggle-senha {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+}
+.toggle-senha .icon { width: 20px; height: 20px; }
+.toggle-senha:hover, .toggle-senha:focus-visible { color: var(--text); }
+.toggle-senha.on { color: var(--accent); }
+.toggle-senha.on::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  top: 9px;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
+  box-shadow: 0 0 0 1.5px var(--surface);
+  transform: rotate(-45deg);
+}
+
+/* Cadastro: composição centralizada, com o formulário num cartão */
+.auth.centered-auth {
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 96px;
+}
+.auth-hero { width: 760px; max-width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.auth-hero h1 { font-size: 28px; line-height: 32px; }
+.auth-hero h1 b { font-weight: 400; color: var(--accent); }
+.auth-hero p { font-size: 14px; line-height: 21px; color: var(--muted); }
+.auth-hero .poster-row { gap: 8px; }
+.auth-hero .poster-row .poster { width: 66px; height: 92px; }
+.auth-hero .poster-row .poster.tall { height: 100px; }
+.auth-hero small { font-size: 12px; color: var(--muted); }
+.auth-card {
+  width: 560px;
+  max-width: 100%;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 24px;
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+.auth-card .welcome { display: flex; flex-direction: column; gap: 8px; }
+.auth-card .welcome h2 { font-size: 30px; font-weight: 700; }
+.auth-card .welcome p { font-size: 15px; line-height: 23px; color: var(--muted); }
+.auth-card .form-error { margin: 0; }
+
+/* Submenu da conta (estado aberto) */
+.account-menu { position: relative; }
+.account-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: -8px;
+  padding: 8px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  font-size: 14px;
+  color: var(--text);
+}
+.account-toggle .chevron { position: absolute; top: 24px; right: 8px; width: 8px; height: 5px; color: var(--accent); display: none; }
+.account-toggle .chevron .icon, .account-toggle .chevron svg { width: 8px; height: 5px; }
+.account-toggle:hover .avatar { box-shadow: inset 0 0 0 1px var(--accent-40); }
+.account-toggle.open {
+  margin-right: -24px;
+  padding-right: 24px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+.account-toggle.open .avatar { box-shadow: inset 0 0 0 1px var(--accent); }
+.account-toggle.open .chevron { display: flex; }
+.account-toggle .chevron .icon { display: flex; }
+.account-dropdown {
+  position: absolute;
+  top: calc(100% + 16px);
+  right: -24px;
+  z-index: 20;
+  width: 260px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--surface);
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 1px var(--border), 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.account-dropdown[hidden] { display: none; }
+.account-dropdown .identity-row { display: flex; flex-direction: column; gap: 6px; padding: 14px 12px; }
+.account-dropdown .identity-row strong { font-size: 14px; font-weight: 600; line-height: 17px; }
+.account-dropdown .identity-row span { font-size: 13px; line-height: 16px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+.account-dropdown .menu-divider { height: 1px; background: var(--border); flex: none; }
+.account-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--text);
+}
+.account-dropdown a:hover, .account-dropdown a:focus-visible { background: var(--surface-2); outline: 0; }
+.account-dropdown a .icon { width: 20px; height: 20px; color: var(--muted); }
+
+/* Botões "Ver filme" e "Continuar para votação" em amarelo, com texto escuro */
+.result .btn, .expanded .top .btn {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+.result .btn:hover, .expanded .top .btn:hover { filter: brightness(1.06); border-color: var(--accent); }
+
+@media (max-width: 900px) {
+  .account-toggle { gap: 0; }
+  .account-toggle .name { display: none; }
+  .account-toggle.open { padding-right: 24px; }
+  .auth.centered-auth { padding: 16px; }
+  .auth-hero .poster-row .poster { width: 56px; height: 80px; }
+  .auth-hero .poster-row .poster.tall { height: 88px; }
+  .auth-card { padding: 16px; }
+}
