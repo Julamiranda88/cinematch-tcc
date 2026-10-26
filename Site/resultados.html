@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resultados da pesquisa · CineMatch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header data-nav="inicio"></header>
+
+  <main class="page" data-results>
+    <h1 class="page-title">Resultados da pesquisa</h1>
+
+    <form class="search-bar" data-search role="search">
+      <i data-icon="search-20"></i>
+      <input type="search" name="q" placeholder="Pesquisar filmes, gêneros ou diretores" aria-label="Pesquisar filmes">
+      <button class="clear" type="button" aria-label="Limpar busca"><i data-icon="x-20"></i></button>
+    </form>
+
+    <div class="filters">
+      <span class="label">Filtrar por</span>
+      <button class="btn btn-primary" type="button" data-apply><i data-icon="sliders-horizontal-20"></i>Aplicar filtros</button>
+    </div>
+
+    <div class="summary-row">
+      <p class="results"></p>
+      <p class="count"></p>
+    </div>
+
+    <section class="result-list"></section>
+    <button class="btn more-btn" type="button" data-more hidden></button>
+
+    <section class="center-state" data-empty hidden>
+      <div class="round-symbol"><i data-icon="search-36"></i></div>
+      <h2>Não encontramos esse filme</h2>
+      <p style="width: 510px; max-width: 100%">Não há resultados para “<span data-query></span>”. Confira o título, tente outras palavras ou remova os filtros.</p>
+      <div class="actions">
+        <button class="btn btn-primary" type="button" data-edit-search>Editar busca</button>
+        <button class="btn" type="button" data-clear-filters>Limpar filtros</button>
+      </div>
+    </section>
+  </main>
+
+  <footer data-footer></footer>
+
+  <script src="js/icons.js"></script>
+  <script src="js/catalogo.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

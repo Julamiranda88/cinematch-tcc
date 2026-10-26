@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Minhas avaliações · CineMatch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header data-nav="historico"></header>
+
+  <main class="page fit-18">
+    <div class="page-header">
+      <a class="back-link" href="perfil.html">←  Meu perfil</a>
+      <h1 class="page-title">Minhas avaliações</h1>
+      <p class="page-desc">Todos os filmes e sugestões que fizeram parte da sua jornada.</p>
+    </div>
+
+    <div class="tabs-row">
+      <div class="tabs" role="tablist">
+        <button class="tab active" type="button" role="tab" aria-selected="true" data-tab="aba-avaliacoes">Avaliações</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-tab="aba-sugestoes">Sugestões</button>
+      </div>
+      <button class="sort" type="button">Mais recentes  ⌄</button>
+    </div>
+
+    <section id="aba-avaliacoes" role="tabpanel">
+      <div class="table" data-historico>
+        <div class="table-head"><span>FILME</span><span>SUA NOTA</span><span>AVALIADO EM</span></div>
+      </div>
+    </section>
+
+    <section id="aba-sugestoes" role="tabpanel" hidden>
+      <div class="table" data-votadas>
+        <div class="table-head"><span>SUGESTÃO</span><span>SITUAÇÃO</span><span>VOTADO EM</span></div>
+      </div>
+    </section>
+
+    <div class="pagination">
+      <span data-contagem></span>
+      <nav class="pages" aria-label="Paginação" data-paginas></nav>
+    </div>
+  </main>
+
+  <footer data-footer></footer>
+
+  <script src="js/icons.js"></script>
+  <script src="js/catalogo.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

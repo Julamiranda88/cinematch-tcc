@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meu perfil · CineMatch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header data-nav="perfil"></header>
+
+  <main class="page">
+    <div class="page-header">
+      <h1 class="page-title">Meu perfil</h1>
+      <p class="page-desc">Seu espaço para guardar todas as suas experiências com o cinema.</p>
+    </div>
+
+    <section class="account-area">
+      <aside class="card profile-menu">
+        <div class="identity">
+          <span class="avatar">JS</span>
+          <strong>João Silva</strong>
+          <span>joao.silva@email.com</span>
+        </div>
+        <div class="divider"></div>
+        <nav class="menu-options" aria-label="Menu do perfil">
+          <a href="perfil.html" aria-current="page"><i data-icon="user-round-20"></i>Meu perfil</a>
+          <a class="highlight" href="avaliacoes.html"><i data-icon="star-20"></i>Minhas avaliações<i data-icon="chevron-right-20"></i></a>
+          <a href="index.html" data-sair><i data-icon="log-out-20"></i>Sair</a>
+        </nav>
+      </aside>
+
+      <div class="profile-summary">
+        <div class="stats" data-stats>
+          <div class="stat"><strong data-avaliados>4</strong><span>Filmes avaliados</span></div>
+          <div class="stat"><strong data-votos>8</strong><span>Votos em sugestões</span></div>
+          <div class="stat"><strong data-media>4,3</strong><span>Média das suas notas</span></div>
+        </div>
+        <article class="card history-card">
+          <i data-icon="history-30"></i>
+          <h2>Cada filme, uma história sua.</h2>
+          <p>Reveja suas notas e comentários, relembre seus filmes favoritos e acompanhe seu histórico de avaliações.</p>
+          <a class="btn btn-primary" href="avaliacoes.html"><i data-icon="arrow-right-20"></i>Ver minhas avaliações</a>
+        </article>
+        <p class="member-since">No CineMatch desde janeiro de 2024.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer data-footer></footer>
+
+  <script src="js/icons.js"></script>
+  <script src="js/catalogo.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

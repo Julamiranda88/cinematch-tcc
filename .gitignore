@@ -1,0 +1,20 @@
+# Chave secreta do TMDB (nunca versionar)
+Projeto/tmdb_chave.txt
+
+# Base de avaliações completa do MovieLens (877 MB, acima do limite de 100 MB do GitHub)
+Projeto/Código + Base/ratings.csv
+
+# Arquivos gerados automaticamente
+*.pkl
+__pycache__/
+*.pyc
+
+# Cache de respostas do TMDB usado só pelo gerador do catálogo
+Site/ferramentas/cache_tmdb/
+
+# Documentos da monografia e versões antigas
+Monografia/
+Backup/
+
+# Configurações locais do Claude Code
+.claude/
