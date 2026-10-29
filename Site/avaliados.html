@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Filmes avaliados · CineMatch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header data-nav="sugestoes"></header>
+
+  <main class="page rated-page" data-avaliados>
+    <a class="back-link accent" href="sugestoes.html">← Voltar à comparação</a>
+
+    <div class="rated-page-head">
+      <div>
+        <h1>Filmes avaliados desta participação</h1>
+        <p data-resumo-participacao></p>
+      </div>
+      <a class="btn btn-primary btn-medium" href="pesquisa.html">Avaliar mais filmes</a>
+    </div>
+
+    <section class="rated-grid"></section>
+
+    <div class="rated-pagination pager-row">
+      <span data-contagem></span>
+      <nav class="pages-nav square" aria-label="Páginas de filmes avaliados"></nav>
+    </div>
+  </main>
+
+  <footer data-footer></footer>
+
+  <script src="js/icons.js"></script>
+  <script src="js/catalogo.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

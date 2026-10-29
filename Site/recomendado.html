@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Filme recomendado · CineMatch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header data-nav="sugestoes"></header>
+
+  <main class="page recommended-page" data-recomendado>
+    <a class="back-link accent" href="sugestoes.html" data-voltar data-voltar-link>← Voltar às sugestões</a>
+
+    <div class="page-header recommended-head">
+      <span class="badge solid-border" data-recomendado-por></span>
+      <h1 class="page-title"></h1>
+      <p class="page-desc" data-genero></p>
+    </div>
+
+    <section class="movie-detail">
+      <aside class="movie-sheet">
+        <span data-poster></span>
+        <span class="community" data-nota-catalogo></span>
+      </aside>
+
+      <div class="movie-body recommended-body">
+        <div class="movie-facts">
+          <h2>Sobre o filme</h2>
+          <dl>
+            <div><dt>GÊNERO</dt><dd data-genero-valor></dd></div>
+            <div><dt>NOTA DO CATÁLOGO</dt><dd class="accent" data-nota-valor></dd></div>
+          </dl>
+        </div>
+        <div class="divider"></div>
+        <section class="card algo-origin">
+          <span class="eyebrow">SUGESTÃO DO ALGORITMO</span>
+          <h2 data-algoritmo></h2>
+          <p data-como-recomenda></p>
+        </section>
+        <div class="rating-note">
+          <strong data-orientacao></strong>
+          <p data-explicacao></p>
+          <a class="btn btn-primary btn-medium" href="sugestoes.html" data-voltar data-voltar-botao>Voltar às sugestões</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer data-footer></footer>
+
+  <script src="js/icons.js"></script>
+  <script src="js/catalogo.js"></script>
+  <script src="js/recomendacoes.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

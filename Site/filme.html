@@ -6,7 +6,7 @@
   <title>Filme · CineMatch</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -15,7 +15,8 @@
   <main class="page gap-16" data-filme>
     <div class="page-header">
       <a class="back-link" href="resultados.html">←  Resultados da pesquisa</a>
-      <span class="badge">Etapa 1 de 6 · Avaliar filme</span>
+      <span class="badge" data-badge-avaliar>Avaliar filme</span>
+      <span class="badge solid-border" data-badge-registrada hidden>✓ Avaliação registrada</span>
       <h1 class="page-title"></h1>
       <p class="page-desc"></p>
     </div>
@@ -25,7 +26,6 @@
         <span data-poster></span>
         <div class="extra">
           <span class="community"></span>
-          <button class="bookmark-btn" type="button" aria-label="Salvar filme" aria-pressed="false"><i data-icon="bookmark-20"></i></button>
         </div>
       </aside>
 
@@ -38,30 +38,62 @@
 
         <div class="divider"></div>
 
-        <form class="rate-block" data-rating>
-          <h2>Como você avalia este filme?</h2>
-          <div class="stars" role="group" aria-label="Nota de 1 a 5 estrelas">
-            <button class="star" type="button" aria-label="1 estrela"><i data-icon="rating-star-32"></i></button>
-            <button class="star" type="button" aria-label="2 estrelas"><i data-icon="rating-star-32"></i></button>
-            <button class="star" type="button" aria-label="3 estrelas"><i data-icon="rating-star-32"></i></button>
-            <button class="star" type="button" aria-label="4 estrelas"><i data-icon="rating-star-32"></i></button>
-            <button class="star" type="button" aria-label="5 estrelas"><i data-icon="rating-star-32"></i></button>
-            <span class="value"></span>
-          </div>
-          <div class="field">
-            <label for="opiniao">Sua opinião (opcional)</label>
-            <div class="input textarea">
-              <textarea id="opiniao" maxlength="500" placeholder="Um filme emocionante sobre o amor e a humanidade..."></textarea>
+        <div class="rate-area" data-modo-avaliar>
+          <form class="rate-block" data-rating>
+            <h2>Como você avalia este filme?</h2>
+            <div class="stars" role="group" aria-label="Nota de 1 a 5 estrelas">
+              <button class="star" type="button" aria-label="1 estrela"><i data-icon="rating-star-32"></i></button>
+              <button class="star" type="button" aria-label="2 estrelas"><i data-icon="rating-star-32"></i></button>
+              <button class="star" type="button" aria-label="3 estrelas"><i data-icon="rating-star-32"></i></button>
+              <button class="star" type="button" aria-label="4 estrelas"><i data-icon="rating-star-32"></i></button>
+              <button class="star" type="button" aria-label="5 estrelas"><i data-icon="rating-star-32"></i></button>
+              <span class="value"></span>
             </div>
-          </div>
-          <p class="char-count">0/500</p>
-          <div class="actions">
-            <button class="btn btn-primary" type="submit" style="width: 230px">Enviar avaliação</button>
-            <a class="btn" href="javascript:history.back()">Cancelar</a>
-          </div>
-        </form>
+            <div class="field">
+              <label for="opiniao">Sua opinião (opcional)</label>
+              <div class="input textarea">
+                <textarea id="opiniao" maxlength="500" placeholder="Um filme emocionante sobre o amor e a humanidade..."></textarea>
+              </div>
+            </div>
+            <p class="char-count">0/500</p>
+            <div class="actions">
+              <button class="btn btn-primary" type="submit" style="width: 230px">Enviar avaliação</button>
+              <a class="btn" href="javascript:history.back()">Cancelar</a>
+            </div>
+          </form>
+          <p class="flow-hint">Avalie pelo menos cinco filmes para liberar sugestões. Depois, dê de 1 a 5 estrelas às recomendações de cada um dos três algoritmos.</p>
+        </div>
 
-        <p class="flow-hint">Ao enviar: avaliação registrada → explorar sugestões → escolher e votar.</p>
+        <div class="rated-area" data-modo-avaliado hidden>
+          <section class="card rated-card-box">
+            <div class="rated-head">
+              <h2>Sua avaliação foi registrada!</h2>
+              <span class="accent">✓ Concluído</span>
+            </div>
+            <div class="rated-score">
+              <div class="rated-stars stars">
+                <span class="star"><i data-icon="rating-star-30"></i></span>
+                <span class="star"><i data-icon="rating-star-30"></i></span>
+                <span class="star"><i data-icon="rating-star-30"></i></span>
+                <span class="star"><i data-icon="rating-star-30"></i></span>
+                <span class="star"><i data-icon="rating-star-30"></i></span>
+              </div>
+              <span class="rated-value"></span>
+            </div>
+            <div class="rated-opinion">
+              <small>Sua opinião</small>
+              <p data-comentario></p>
+            </div>
+          </section>
+          <div class="actions">
+            <a class="btn btn-primary btn-medium" href="pesquisa.html">Incluir mais itens</a>
+            <a class="btn btn-medium" href="sugestoes.html">Avaliar sugestões</a>
+          </div>
+          <div class="info-box">
+            <strong data-minimo-titulo></strong>
+            <p data-minimo-texto></p>
+          </div>
+        </div>
       </div>
     </section>
   </main>

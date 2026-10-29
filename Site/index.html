@@ -3,54 +3,65 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Entrar · CineMatch</title>
+  <title>Início · CineMatch</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header data-auth></header>
+  <header data-nav="inicio"></header>
 
-  <main class="auth">
-    <section class="auth-intro">
-      <h1>Seu próximo filme. Seu próximo <b>match.</b></h1>
-      <p>Avalie, descubra, recomende e faça parte de uma comunidade apaixonada por cinema.</p>
-      <div class="poster-row">
-        <img class="poster" src="img/posters/login-duna.jpg" alt="Pôster de Duna: Parte Dois">
-        <img class="poster tall" src="img/posters/login-interestelar.jpg" alt="Pôster de Interestelar">
-        <img class="poster" src="img/posters/login-a-origem.jpg" alt="Pôster de A Origem">
-      </div>
-      <small>Grandes histórias merecem ser compartilhadas.</small>
-    </section>
-
-    <form class="auth-form" data-auth-form="login" novalidate>
-      <div class="welcome">
-        <h2>Bem-vindo(a) !</h2>
-        <p>Entre na sua conta com e-mail e senha para encontrar seu próximo filme.</p>
-      </div>
-      <div class="field">
-        <label for="email">E-mail</label>
-        <div class="input"><i data-icon="user-round-20"></i><input id="email" name="email" type="email" placeholder="seu@email.com" autocomplete="email"></div>
-      </div>
-      <div class="field">
-        <label for="senha">Senha</label>
-        <div class="input">
-          <i data-icon="lock-keyhole-20"></i>
-          <input id="senha" name="senha" type="password" placeholder="••••••••" autocomplete="current-password">
-          <button class="toggle-senha" type="button" aria-label="Mostrar senha" aria-pressed="false"><i data-icon="eye-20"></i></button>
+  <main class="page home">
+    <div class="home-top">
+      <section class="steps-card" aria-labelledby="como-participar">
+        <h1 id="como-participar">Como participar do TCC</h1>
+        <ol class="steps">
+          <li><strong>1. Avalie 5 filmes</strong><span>Busque filmes que já viu e dê sua nota. O mínimo de cinco é obrigatório.</span></li>
+          <li><strong>2. Avalie as sugestões</strong><span>Compare os três algoritmos e dê de 1 a 5 estrelas a cada um.</span></li>
+          <li><strong>3. Conclua</strong><span>Envie as três avaliações e volte ao início.</span></li>
+        </ol>
+        <div class="user-summary" data-resumo>
+          <div class="summary-status">
+            <span data-contagem>0 de 5 filmes avaliados · Faltam 5</span>
+            <strong data-estado>Mínimo ainda não atingido</strong>
+            <div class="progress" role="presentation"><span class="progress-fill"></span></div>
+          </div>
+          <div class="resumo-acoes">
+            <a class="btn btn-outline btn-md" href="pesquisa.html">Avaliar mais filmes</a>
+            <a class="btn btn-primary btn-md" href="sugestoes.html"><i data-icon="arrow-right-20"></i>Avaliar sugestões</a>
+          </div>
         </div>
-      </div>
-      <a class="forgot" href="#">Esqueceu sua senha?</a>
-      <p class="form-error" role="alert" hidden></p>
-      <button class="btn btn-primary btn-block" type="submit">Entrar</button>
-      <p class="switch-access">Ainda não tem uma conta? <a href="cadastro.html">Cadastre-se</a></p>
+      </section>
+
+      <section class="hero hero-compact" data-destaque>
+        <img src="img/filmes/fundo-109487.jpg" alt="" onerror="this.remove()">
+        <span class="eyebrow">EM DESTAQUE</span>
+        <h2>Interestelar</h2>
+        <p class="meta"></p>
+        <p class="synopsis"></p>
+        <a class="btn btn-primary" href="filme.html?id=109487"><i data-icon="arrow-right-20"></i>Ver filme</a>
+      </section>
+    </div>
+
+    <form class="search-bar" data-search data-search-home role="search">
+      <button class="search-submit" type="submit" aria-label="Pesquisar"><i data-icon="search-20"></i></button>
+      <input type="search" name="q" placeholder="Pesquisar filmes, gêneros ou diretores" aria-label="Pesquisar filmes">
     </form>
+
+    <div class="section-head">
+      <h2>Em alta agora</h2>
+      <a href="resultados.html">Explorar filmes →</a>
+    </div>
+
+    <section class="trending"></section>
   </main>
 
-  <footer data-footer="auth"></footer>
+  <footer data-footer></footer>
 
   <script src="js/icons.js"></script>
+  <script src="js/catalogo.js"></script>
+  <script src="js/recomendacoes.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

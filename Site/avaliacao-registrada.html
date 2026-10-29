@@ -6,13 +6,13 @@
   <title>Avaliação registrada · CineMatch</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <header data-nav="inicio"></header>
 
-  <main class="page">
+  <main class="page" data-registrada>
     <section class="confirm">
       <div class="seal-wrap">
         <div class="seal"><i data-icon="check-50"></i></div>
@@ -22,23 +22,28 @@
 
       <div class="message">
         <h1>Avaliação registrada!</h1>
-        <p>Obrigado por compartilhar sua opinião com a comunidade.</p>
+        <p>Sua avaliação contribui para esta participação no TCC.</p>
       </div>
 
       <div class="guide">
         <div>
-          <h3>Etapa 2 de 6 · Avaliação registrada</h3>
-          <p><span data-ultimo-filme>Interestelar</span> · Sua nota: <span data-rating-echo>4,0</span>. Continue para explorar as coleções, conhecer os filmes e votar em uma sugestão.</p>
+          <h3 data-guia-titulo>Continue avaliando filmes</h3>
+          <p data-guia-texto></p>
         </div>
-        <div class="chips">
-          <span class="chip">Viagem às estrelas</span>
-          <span class="chip">Ficção científica essencial</span>
-          <span class="chip">Uma dose de adrenalina</span>
-        </div>
+        <ol class="guide-steps">
+          <li><span class="num">1</span>Avaliar ao menos cinco filmes</li>
+          <li><span class="num">2</span>Comparar e avaliar as recomendações dos três algoritmos em uma mesma tela</li>
+          <li><span class="num">3</span>Enviar as três avaliações e voltar ao início</li>
+        </ol>
       </div>
 
-      <a class="btn btn-primary btn-wide" href="sugestoes.html">Continuar para sugestões</a>
-      <a class="secondary-link" href="avaliacoes.html">Ver minhas avaliações</a>
+      <div class="confirm-actions" data-acoes-liberadas hidden>
+        <a class="btn btn-primary btn-wide" href="sugestoes.html">Avaliar sugestões</a>
+        <a class="secondary-link" href="pesquisa.html">Incluir Itens</a>
+      </div>
+      <div class="confirm-actions" data-acoes-pendentes>
+        <a class="btn btn-primary btn-wide" href="pesquisa.html">Incluir Itens</a>
+      </div>
     </section>
   </main>
 
