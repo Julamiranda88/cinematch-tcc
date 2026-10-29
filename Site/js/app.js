@@ -660,7 +660,7 @@ function initAvaliados() {
           <span class="genre">${generoPrincipal(f)}</span>
           <span class="mine" title="Avaliado em ${dataPorExtenso(a.data)}">★ Sua nota: ${fmt(a.nota)}</span>
         </a>`;
-    }).join("") : `<p class="table-empty">Você ainda não avaliou nenhum filme. <a href="pesquisa.html">Avaliar filmes →</a></p>`;
+    }).join("") : `<p class="table-empty">Você ainda não avaliou nenhum filme. <a href="resultados.html">Avaliar filmes →</a></p>`;
     rodape.hidden = !total;
     rodape.querySelector("[data-contagem]").textContent = `${inicio + 1}–${inicio + visiveis.length} de ${plural(total, "filme", "filmes")}`;
     paginacao(rodape.querySelector(".pages-nav"), pagina, paginas, (n) => { pagina = n; render(); window.scrollTo(0, 0); });
