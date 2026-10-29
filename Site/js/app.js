@@ -243,7 +243,18 @@ function initInicio() {
   hero.querySelector(".meta").innerHTML = `${f[3]}  ·  ${esc(generoPrincipal(f))}  ·  <span>★ ${notaComunidade(f)}</span>`;
   hero.querySelector(".btn").href = `filme.html?id=${f[0]}`;
   carregarDetalhes(f[0]).then((d) => { if (d.sinopse) hero.querySelector(".synopsis").textContent = d.sinopse; });
-  document.querySelector(".trending").innerHTML = FILMES.slice(0, 6).map(cartaoFilme).join("");
+  const emAlta = document.querySelector(".trending");
+  emAlta.innerHTML = FILMES.slice(0, 12).map(cartaoFilme).join("");
+  // Mostra só os filmes que cabem em uma linha: 6 na largura do Figma (1280px), mais em telas largas
+  const ajustarLinha = () => {
+    const cards = [...emAlta.children];
+    cards.forEach((c) => c.classList.remove("fora-da-linha"));
+    if (getComputedStyle(emAlta).gridAutoRows !== "0px") return;
+    const topo = cards[0].offsetTop;
+    cards.forEach((c) => c.classList.toggle("fora-da-linha", c.offsetTop > topo));
+  };
+  ajustarLinha();
+  window.addEventListener("resize", ajustarLinha);
 }
 
 // ---------- Resultados da pesquisa ----------

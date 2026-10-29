@@ -1381,3 +1381,18 @@ a.search-bar { color: var(--muted); font-size: 15px; }
   .pages-nav { flex-wrap: wrap; }
   .page-btn { padding: 0 14px; }
 }
+
+/* "Em alta agora" ocupa toda a largura: 6 filmes em 1280px, mais colunas em telas largas, sempre uma linha */
+.home .trending {
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  grid-template-rows: auto;
+  grid-auto-rows: 0;
+  column-gap: 20px;
+  row-gap: 0;
+  overflow: hidden;
+}
+.home .trending .fora-da-linha { visibility: hidden; }
+@media (max-width: 1240px) {
+  .home .trending { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); grid-auto-rows: auto; row-gap: 20px; overflow: visible; }
+  .home .trending .movie-card:nth-child(n+7) { display: none; }
+}
