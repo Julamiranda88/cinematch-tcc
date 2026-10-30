@@ -361,6 +361,9 @@ a.search-bar { color: var(--muted); font-size: 15px; }
 
 /* ---------- Sobre ---------- */
 .about { display: flex; gap: 64px; padding-top: 28px; }
+/* Em telas altas o conteúdo do Sobre fica centralizado no espaço livre, em vez de deixar o vazio todo embaixo */
+main:has(> .about) .about { flex: 1; align-items: center; padding-bottom: 28px; }
+@media (max-width: 900px) { main:has(> .about) .about { align-items: stretch; } }
 .about-intro { width: 590px; flex: none; display: flex; flex-direction: column; gap: 26px; align-items: flex-start; }
 .about-intro h2 { font-size: 38px; font-weight: 700; line-height: 1.2; }
 .about-intro .lead { font-size: 17px; line-height: 1.5; color: var(--muted); }
@@ -1153,7 +1156,7 @@ a.search-bar { color: var(--muted); font-size: 15px; }
 .page.results-page { padding-top: 24px; padding-bottom: 24px; gap: 16px; }
 .result-grid { display: grid; grid-template-columns: repeat(var(--colunas, 4), minmax(0, 1fr)); gap: 20px; }
 .result-card { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.result-card .poster { width: 100%; height: 300px; }
+.result-card .poster { width: 100%; height: var(--altura-poster, 300px); }
 .result-card h3 { font-size: 14px; font-weight: 600; line-height: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .result-card .meta { font-size: 12px; line-height: 15px; color: var(--muted); }
 .result-card .rating { font-size: 13px; line-height: 16px; color: var(--accent); display: flex; gap: 10px; }
