@@ -54,8 +54,11 @@ function duracao(min) {
   return h ? (m ? `${h}h ${m}min` : `${h}h`) : `${m}min`;
 }
 
-function metadados(f, generos = 1) {
-  return [f[3] || null, generosDe(f).slice(0, generos).join(", ") || null, duracao(f[7]) || null].filter(Boolean).join(" · ");
+// "primeiro": gênero filtrado na pesquisa, mostrado no lugar do primeiro gênero do filme
+function metadados(f, generos = 1, primeiro = null) {
+  const lista = generosDe(f);
+  if (primeiro && lista.includes(primeiro)) lista.sort((a, b) => (b === primeiro) - (a === primeiro));
+  return [f[3] || null, lista.slice(0, generos).join(", ") || null, duracao(f[7]) || null].filter(Boolean).join(" · ");
 }
 
 function poster(f, extra = "") {
@@ -357,12 +360,26 @@ function initResultados() {
     return achados.map((f, i) => [comeca(f), i, f]).sort((a, b) => a[0] - b[0] || a[1] - b[1]).map((x) => x[2]);
   }
 
+  // Em telas largas cabem mais de 4 cartazes por linha: a página mostra uma linha cheia em vez de espaçar 4 cartazes
+  let porPagina = POR_PAGINA_RESULTADOS;
+  const colunas = () => (matchMedia("(max-width: 900px)").matches
+    ? POR_PAGINA_RESULTADOS
+    : Math.max(POR_PAGINA_RESULTADOS, Math.floor((rodape.clientWidth + 20) / (240 + 20))));
+  window.addEventListener("resize", () => {
+    const novo = colunas();
+    if (novo === porPagina) return;
+    pagina = Math.floor(((pagina - 1) * porPagina) / novo) + 1;
+    render();
+  });
+
   function render() {
+    porPagina = colunas();
+    grid.style.setProperty("--colunas", porPagina);
     const found = encontrados();
-    const paginas = Math.max(1, Math.ceil(found.length / POR_PAGINA_RESULTADOS));
+    const paginas = Math.max(1, Math.ceil(found.length / porPagina));
     pagina = Math.min(pagina, paginas);
-    const inicio = (pagina - 1) * POR_PAGINA_RESULTADOS;
-    const visiveis = found.slice(inicio, inicio + POR_PAGINA_RESULTADOS);
+    const inicio = (pagina - 1) * porPagina;
+    const visiveis = found.slice(inicio, inicio + porPagina);
     summary.textContent = query ? `Resultados para “${query}”${found.length > 1 ? " e títulos relacionados" : ""}` : "Todos os filmes do catálogo, dos mais avaliados aos menos avaliados";
     count.textContent = `${found.length.toLocaleString("pt-BR")} ${found.length === 1 ? "filme encontrado" : "filmes encontrados"}`;
     grid.hidden = rodape.hidden = !found.length;
@@ -373,13 +390,13 @@ function initResultados() {
       <article class="result-card">
         ${poster(f)}
         <h3 title="${esc(titulo(f))}">${esc(titulo(f))}</h3>
-        <p class="meta">${esc(metadados(f))}</p>
+        <p class="meta">${esc(metadados(f, 1, state.genero ? FILTERS.genero.options[state.genero] : null))}</p>
         <p class="rating">★ <span>${notaComunidade(f)}</span>${notas[f[0]] ? `<em>✓ Sua nota: ${fmt(notas[f[0]].nota)}</em>` : ""}</p>
         <a class="btn btn-primary btn-sm" href="filme.html?id=${f[0]}">${icon("arrow-right-20")}Ver detalhes</a>
       </article>`).join("");
     const n = (v) => v.toLocaleString("pt-BR");
     rodape.querySelector("[data-contagem]").textContent = found.length
-      ? `${n(inicio + 1)}–${n(inicio + visiveis.length)} de ${n(found.length)} ${found.length === 1 ? "filme" : "filmes"} · ${POR_PAGINA_RESULTADOS} por página`
+      ? `${n(inicio + 1)}–${n(inicio + visiveis.length)} de ${n(found.length)} ${found.length === 1 ? "filme" : "filmes"} · ${porPagina} por página`
       : "";
     paginacao(rodape.querySelector(".pages-nav"), pagina, paginas, (n) => { pagina = n; render(); });
   }
