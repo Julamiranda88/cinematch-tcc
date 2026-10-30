@@ -360,41 +360,21 @@ function initResultados() {
     return achados.map((f, i) => [comeca(f), i, f]).sort((a, b) => a[0] - b[0] || a[1] - b[1]).map((x) => x[2]);
   }
 
-  // Telas grandes mostram mais cartazes: colunas que cabem na largura × linhas que cabem na altura,
-  // em vez de espaçar 4 cartazes e deixar a parte de baixo vazia
-  // Os pôsteres crescem (até 520px de altura) para ocupar a sobra, mantendo a proporção do Figma (273 × 300)
+  // Em telas largas cabem mais de 4 cartazes por linha: a página mostra uma linha cheia em vez de espaçar 4 cartazes
   let porPagina = POR_PAGINA_RESULTADOS;
-  let alturaTexto = 0; // parte do cartão abaixo do pôster: título, dados, nota e botão
-  const footer = document.querySelector(".site-footer");
-  const layout = () => {
-    if (matchMedia("(max-width: 900px)").matches) return { colunas: 2, total: POR_PAGINA_RESULTADOS, poster: null };
-    let poster = 300;
-    let linhas = 1;
-    if (alturaTexto) {
-      const estilo = getComputedStyle(page);
-      const topo = grid.getBoundingClientRect().top + window.scrollY;
-      const abaixo = rodape.offsetHeight + parseFloat(estilo.rowGap) + parseFloat(estilo.paddingBottom) + (footer ? footer.offsetHeight : 0);
-      const livre = window.innerHeight - topo - abaixo;
-      // Com mais de uma linha o pôster pode encolher até 260px; com uma só, nunca fica menor que os 300px do Figma
-      linhas = Math.max(1, Math.floor((livre + 20) / (260 + alturaTexto + 20)));
-      poster = Math.min(520, Math.max(linhas > 1 ? 260 : 300, Math.floor((livre + 20) / linhas - 20 - alturaTexto)));
-    }
-    const larguraMinima = (poster * 240) / 300;
-    const colunas = Math.max(POR_PAGINA_RESULTADOS, Math.floor((rodape.clientWidth + 20) / (larguraMinima + 20)));
-    return { colunas, total: colunas * linhas, poster };
-  };
-  const reajustar = () => {
-    const novo = layout().total;
-    if (novo !== porPagina) pagina = Math.floor(((pagina - 1) * porPagina) / novo) + 1;
+  const colunas = () => (matchMedia("(max-width: 900px)").matches
+    ? POR_PAGINA_RESULTADOS
+    : Math.max(POR_PAGINA_RESULTADOS, Math.floor((rodape.clientWidth + 20) / (240 + 20))));
+  window.addEventListener("resize", () => {
+    const novo = colunas();
+    if (novo === porPagina) return;
+    pagina = Math.floor(((pagina - 1) * porPagina) / novo) + 1;
     render();
-  };
-  window.addEventListener("resize", reajustar);
+  });
 
   function render() {
-    const { colunas: cols, total, poster: alturaPoster } = layout();
-    porPagina = total;
-    grid.style.setProperty("--colunas", cols);
-    if (alturaPoster) grid.style.setProperty("--altura-poster", `${alturaPoster}px`);
+    porPagina = colunas();
+    grid.style.setProperty("--colunas", porPagina);
     const found = encontrados();
     const paginas = Math.max(1, Math.ceil(found.length / porPagina));
     pagina = Math.min(pagina, paginas);
@@ -419,12 +399,6 @@ function initResultados() {
       ? `${n(inicio + 1)}–${n(inicio + visiveis.length)} de ${n(found.length)} ${found.length === 1 ? "filme" : "filmes"} · ${porPagina} por página`
       : "";
     paginacao(rodape.querySelector(".pages-nav"), pagina, paginas, (n) => { pagina = n; render(); });
-    // A altura do texto do cartão só é conhecida depois do primeiro desenho; com ela, calcula quantas linhas cabem
-    const cartao = grid.querySelector(".result-card");
-    if (!alturaTexto && cartao && !matchMedia("(max-width: 900px)").matches) {
-      alturaTexto = cartao.offsetHeight - cartao.querySelector(".poster").offsetHeight;
-      reajustar();
-    }
   }
 
   const limpar = () => {
