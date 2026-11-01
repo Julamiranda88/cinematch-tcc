@@ -11,8 +11,8 @@ const NAV_LINKS = [
 const MINIMO = 5; // filmes que o participante precisa avaliar para liberar as sugestões
 const DESTAQUE = 109487; // Interstellar (2014)
 const POR_PAGINA_RESULTADOS = 4;
-const POR_PAGINA_AVALIADOS = 8;
 const NA_FAIXA = 5; // filmes mostrados em "Seu ponto de partida"
+const LINHAS = 4;
 
 const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
 
@@ -270,6 +270,26 @@ function opcoesDeFiltro() {
   };
 }
 
+function cartazResultado(f, avaliacao, genero) {
+  const sua = avaliacao
+    ? `<em${avaliacao.data ? ` title="Avaliado em ${dataPorExtenso(avaliacao.data)}"` : ""}>✓ Sua nota: ${fmt(avaliacao.nota)}</em>`
+    : "";
+  return `
+      <article class="result-card">
+        ${poster(f)}
+        <h3 title="${esc(titulo(f))}">${esc(titulo(f))}</h3>
+        <p class="meta">${esc(metadados(f, 1, genero || null))}</p>
+        <p class="rating">★ <span>${notaComunidade(f)}</span>${sua}</p>
+        <a class="btn btn-primary btn-sm" href="filme.html?id=${f[0]}">${icon("arrow-right-20")}Ver detalhes</a>
+      </article>`;
+}
+
+function colunasDaGrade(rodape) {
+  return matchMedia("(max-width: 900px)").matches
+    ? POR_PAGINA_RESULTADOS
+    : Math.max(POR_PAGINA_RESULTADOS, Math.floor((rodape.clientWidth + 20) / (240 + 20)));
+}
+
 function initResultados() {
   const page = document.querySelector("[data-results]");
   if (!page) return;
@@ -360,21 +380,21 @@ function initResultados() {
     return achados.map((f, i) => [comeca(f), i, f]).sort((a, b) => a[0] - b[0] || a[1] - b[1]).map((x) => x[2]);
   }
 
-  // Em telas largas cabem mais de 4 cartazes por linha: a página mostra uma linha cheia em vez de espaçar 4 cartazes
-  let porPagina = POR_PAGINA_RESULTADOS;
-  const colunas = () => (matchMedia("(max-width: 900px)").matches
-    ? POR_PAGINA_RESULTADOS
-    : Math.max(POR_PAGINA_RESULTADOS, Math.floor((rodape.clientWidth + 20) / (240 + 20))));
+  const colunas = () => colunasDaGrade(rodape);
+
+  let porPagina = colunas() * LINHAS;
+
   window.addEventListener("resize", () => {
-    const novo = colunas();
+    const novo = colunas() * LINHAS;
     if (novo === porPagina) return;
     pagina = Math.floor(((pagina - 1) * porPagina) / novo) + 1;
     render();
   });
 
   function render() {
-    porPagina = colunas();
-    grid.style.setProperty("--colunas", porPagina);
+    const numColunas = colunas();
+    porPagina = numColunas * LINHAS;
+    grid.style.setProperty("--colunas", numColunas);
     const found = encontrados();
     const paginas = Math.max(1, Math.ceil(found.length / porPagina));
     pagina = Math.min(pagina, paginas);
@@ -386,14 +406,8 @@ function initResultados() {
     empty.hidden = !!found.length;
     empty.querySelector("[data-query]").textContent = query || "estes filtros";
     const notas = avaliacoes();
-    grid.innerHTML = visiveis.map((f) => `
-      <article class="result-card">
-        ${poster(f)}
-        <h3 title="${esc(titulo(f))}">${esc(titulo(f))}</h3>
-        <p class="meta">${esc(metadados(f, 1, state.genero ? FILTERS.genero.options[state.genero] : null))}</p>
-        <p class="rating">★ <span>${notaComunidade(f)}</span>${notas[f[0]] ? `<em>✓ Sua nota: ${fmt(notas[f[0]].nota)}</em>` : ""}</p>
-        <a class="btn btn-primary btn-sm" href="filme.html?id=${f[0]}">${icon("arrow-right-20")}Ver detalhes</a>
-      </article>`).join("");
+    const generoFiltro = state.genero ? FILTERS.genero.options[state.genero] : null;
+    grid.innerHTML = visiveis.map((f) => cartazResultado(f, notas[f[0]], generoFiltro)).join("");
     const n = (v) => v.toLocaleString("pt-BR");
     rodape.querySelector("[data-contagem]").textContent = found.length
       ? `${n(inicio + 1)}–${n(inicio + visiveis.length)} de ${n(found.length)} ${found.length === 1 ? "filme" : "filmes"} · ${porPagina} por página`
@@ -416,6 +430,42 @@ function initResultados() {
   render();
 }
 
+const NOTA_MIN = 0.5;
+const NOTA_MAX = 5;
+const arredondarNota = (v) => Math.round(v * 2) / 2;
+
+function pintarEstrelas(stars, n) {
+  stars.forEach((s, i) => {
+    const parte = Math.min(1, Math.max(0, n - i));
+    const cheia = parte >= 0.999;
+    const icone = s.querySelector(":scope > .icon");
+    const parcial = parte > 0 && !cheia && !!icone;
+    s.classList.toggle("on", cheia || (parte >= 0.5 && !icone));
+    s.classList.toggle("part", parcial);
+    if (!parcial) return;
+    if (!s.querySelector(":scope > .fill")) {
+      const ov = document.createElement("span");
+      ov.className = "fill";
+      ov.setAttribute("aria-hidden", "true");
+      ov.appendChild(icone.cloneNode(true));
+      s.appendChild(ov);
+    }
+    s.style.setProperty("--resto", `${(1 - parte) * 100}%`);
+  });
+}
+
+function notaPorPosicao(itens, x, minimo = NOTA_MIN) {
+  let melhor = 0, menor = Infinity;
+  itens.forEach((s, i) => {
+    const r = s.getBoundingClientRect();
+    const d = x < r.left ? r.left - x : x > r.right ? x - r.right : 0;
+    if (d < menor) { menor = d; melhor = i; }
+  });
+  const r = itens[melhor].getBoundingClientRect();
+  const fracao = Math.min(1, Math.max(0, (x - r.left) / r.width));
+  return Math.min(NOTA_MAX, Math.max(minimo, arredondarNota(melhor + fracao)));
+}
+
 // ---------- Filme: avaliar ou ver a avaliação registrada ----------
 function initFilme() {
   const page = document.querySelector("[data-filme]");
@@ -431,20 +481,44 @@ function initFilme() {
   if (document.referrer.includes("resultados.html")) page.querySelector(".back-link").href = document.referrer;
   preencherSinopse(page.querySelector(".synopsis-block"), f[0]);
 
-  page.querySelector("[data-badge-avaliar]").hidden = !!registrada;
-  page.querySelector("[data-badge-registrada]").hidden = !registrada;
-  page.querySelector("[data-modo-avaliar]").hidden = !!registrada;
-  page.querySelector("[data-modo-avaliado]").hidden = !registrada;
-  page.classList.toggle("avaliado", !!registrada);
-  if (registrada) mostrarAvaliacaoRegistrada(page, registrada);
-  else iniciarFormularioDeNota(page, f);
+ let modo = "avaliar";
+  const badgeAvaliar = page.querySelector("[data-badge-avaliar]");
+  const trocarModo = (novo) => {
+    modo = novo;
+    badgeAvaliar.textContent = novo === "editar" ? "Editar avaliação" : "Avaliar filme";
+    badgeAvaliar.hidden = novo === "ver";
+    page.querySelector("[data-badge-registrada]").hidden = novo !== "ver";
+    page.querySelector("[data-modo-avaliar]").hidden = novo === "ver";
+    page.querySelector("[data-modo-avaliado]").hidden = novo !== "ver";
+    page.classList.toggle("avaliado", novo === "ver");
+  };
+  const formulario = iniciarFormularioDeNota(page, f, (a) => {
+    mostrarAvaliacaoRegistrada(page, a);
+    trocarModo("ver");
+    window.scrollTo(0, 0);
+  });
+  if (registrada) { mostrarAvaliacaoRegistrada(page, registrada); trocarModo("ver"); }
+  else trocarModo("avaliar");
+  const botaoEditar = page.querySelector("[data-editar]");
+  if (botaoEditar) botaoEditar.addEventListener("click", () => {
+    const a = avaliacoes()[f[0]];
+    if (!a) return;
+    formulario.preencher(a.nota, a.comentario);
+    trocarModo("editar");
+  });
+  const cancelar = page.querySelector("form[data-rating] .actions a");
+  if (cancelar) cancelar.addEventListener("click", (e) => {
+    if (modo !== "editar") return;
+    e.preventDefault();
+    trocarModo("ver");
+  });
 }
 
 function mostrarAvaliacaoRegistrada(page, a) {
   const bloco = page.querySelector("[data-modo-avaliado]");
-  bloco.querySelectorAll(".rated-stars .star").forEach((s, i) => s.classList.toggle("on", i < a.nota));
+  pintarEstrelas([...bloco.querySelectorAll(".rated-stars .star")], a.nota);
   bloco.querySelector(".rated-value").innerHTML = `${fmt(a.nota)} <span>/ 5</span>`;
-  bloco.querySelector(".rated-stars").setAttribute("aria-label", `Sua nota: ${a.nota} de 5`);
+  bloco.querySelector(".rated-stars").setAttribute("aria-label", `Sua nota: ${fmt(a.nota)} de 5`);
   const comentario = bloco.querySelector("[data-comentario]");
   comentario.textContent = a.comentario || "Você não escreveu um comentário para este filme.";
   comentario.classList.toggle("muted", !a.comentario);
@@ -457,29 +531,65 @@ function mostrarAvaliacaoRegistrada(page, a) {
     : "Continue incluindo filmes até completar cinco avaliações. Depois, compare as sugestões de KNN, SVD e Redes Neurais.";
 }
 
-function iniciarFormularioDeNota(page, f) {
+function iniciarFormularioDeNota(page, f, aoEditar) {
   const form = page.querySelector("form[data-rating]");
+  const starsEl = form.querySelector(".stars");
   const stars = [...form.querySelectorAll(".star")];
   const value = form.querySelector(".stars .value");
   const textarea = form.querySelector("textarea");
   const counter = form.querySelector(".char-count");
   const enviar = form.querySelector("[type=submit]");
   let rating = 0;
+  let arrastando = false;
 
+  const limitar = (v) => Math.min(NOTA_MAX, Math.max(NOTA_MIN, arredondarNota(v)));
   const paint = (n) => {
-    stars.forEach((s, i) => s.classList.toggle("on", i < n));
+    pintarEstrelas(stars, n);
     value.textContent = n ? "  " + fmt(n) : "  Escolha uma nota";
   };
-  stars.forEach((s, i) => {
-    s.addEventListener("click", () => {
-      rating = i + 1;
-      paint(rating);
-      enviar.disabled = false;
+ 
+  const definir = (n) => {
+    rating = n;
+    paint(n);
+    enviar.disabled = !n;
+  };
+
+  // Nota sob o ponteiro, em passos de 0,5
+  const notaNoPonto = (x) => {
+    let melhor = 0, menor = Infinity;
+    stars.forEach((s, i) => {
+      const r = s.getBoundingClientRect();
+      const d = x < r.left ? r.left - x : x > r.right ? x - r.right : 0;
+      if (d < menor) { menor = d; melhor = i; }
     });
-    s.addEventListener("mouseenter", () => paint(i + 1));
-    s.addEventListener("focus", () => paint(i + 1));
+    const r = stars[melhor].getBoundingClientRect();
+    const fracao = Math.min(1, Math.max(0, (x - r.left) / r.width));
+    return limitar(melhor + fracao);
+  };
+
+  starsEl.addEventListener("pointerdown", (e) => {
+    if (e.button) return;
+    arrastando = true;
+    starsEl.setPointerCapture(e.pointerId);
+    definir(notaNoPonto(e.clientX));
   });
-  form.querySelector(".stars").addEventListener("mouseleave", () => paint(rating));
+  starsEl.addEventListener("pointermove", (e) => {
+    if (arrastando) definir(notaNoPonto(e.clientX));
+    else if (e.pointerType === "mouse") paint(notaNoPonto(e.clientX));
+  });
+  const soltar = () => { arrastando = false; };
+  starsEl.addEventListener("pointerup", soltar);
+  starsEl.addEventListener("pointercancel", soltar);
+  starsEl.addEventListener("pointerleave", () => { if (!arrastando) paint(rating); });
+
+  // Teclado: Enter/Espaço numa estrela dá a nota inteira; setas ajustam de 0,5 em 0,5
+  stars.forEach((s, i) => s.addEventListener("click", (e) => { if (e.detail === 0) definir(i + 1); }));
+  starsEl.addEventListener("keydown", (e) => {
+    const dir = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[e.key];
+    if (!dir) return;
+    e.preventDefault();
+    definir(limitar((rating || 0) + dir * 0.5));
+  });
   const count = () => { counter.textContent = `${textarea.value.length}/500`; };
   textarea.addEventListener("input", count);
   count();
@@ -489,9 +599,24 @@ function iniciarFormularioDeNota(page, f) {
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     if (!rating) return;
+    const existente = avaliacoes()[f[0]];
+    if (existente) {
+      const todas = avaliacoes();
+      todas[f[0]] = { ...existente, nota: rating, comentario: textarea.value.trim() };
+      store.set("avaliacoes", todas);
+      aoEditar(todas[f[0]]);
+      return;
+    }
     registrarAvaliacao(f[0], rating, textarea.value.trim());
     window.location.href = "avaliacao-registrada.html";
   });
+  return {
+    preencher(nota, comentario) {
+      definir(nota);
+      textarea.value = comentario || "";
+      count();
+    },
+  };
 }
 
 // ---------- Avaliação registrada ----------
@@ -510,8 +635,32 @@ function initRegistrada() {
   page.querySelector("[data-acoes-pendentes]").hidden = ok;
 }
 
+// Estado de carregamento
+function blocoCarregamento(tipo) {
+  return `
+    <div class='carrega'>
+      <h3>Processando ${tipo}...</h3>
+      <p>Estamos processando suas ${tipo}. Isto pode demorar alguns segundos...</p>
+      <div class="spinner"></div>
+    </div>
+  `;
+}
+
+// Renderiza a mensagem de erro e o botão de tentar novamente
+function blocoErro() {
+  return `
+      <div class='erro'>
+        <h3>Ops! Ocorreu um erro</h3>
+        <p>Não conseguimos comunicar com o servidor.</p>
+        <button id="btn-tentar-novamente" class="btn btn-primary btn-medium" type="button">
+          Tentar novamente
+        </button>
+      </div>
+    `;
+}
+
 // ---------- Sugestões: comparar e avaliar os algoritmos ----------
-function initSugestoes() {
+async function initSugestoes() {
   const page = document.querySelector("[data-sugestoes]");
   if (!page) return;
   const ok = minimoAtingido();
@@ -534,35 +683,52 @@ function initSugestoes() {
   }).join("");
   page.querySelector("[data-liberadas]").textContent = `✓ Sugestões liberadas · ${plural(total, "filme avaliado", "filmes avaliados")} (mínimo: ${MINIMO})`;
 
-  const recomendacoes = obterRecomendacoes(avaliacoes());
   const cards = page.querySelector("[data-algoritmos]");
-  cards.innerHTML = ALGORITMOS.map((alg) => `
-    <section class="algo-card" id="${alg.id}" data-alg="${alg.id}">
-      <div class="algo-info">
-        <h2>${alg.nome}</h2>
-        <strong>${alg.metodo}</strong>
-        <p>${alg.descricao}</p>
-      </div>
-      <div class="algo-films">
-        ${(recomendacoes[alg.id] || []).map(filme).filter(Boolean).map((f) => `
-          <a class="algo-film" href="recomendado.html?id=${f[0]}&alg=${alg.id}">
-            ${poster(f)}
-            <span title="${esc(titulo(f))}">${esc(titulo(f))}</span>
-          </a>`).join("")}
-      </div>
-      <div class="algo-rating">
-        <div class="algo-question">
-          <span>Como ${alg.sigla || alg.nome} recomendou?</span>
-          <small data-estado-nota>Sem nota</small>
+
+  cards.innerHTML = blocoCarregamento("recomendações");
+
+  try{  
+
+    const payload = {
+        'avaliacoes': avaliacoes()
+    };
+    const recomendacoes = await comunicacaoApi('recomendacoes', payload);
+
+    cards.innerHTML = ALGORITMOS.map((alg) => `
+      <section class="algo-card" id="${alg.id}" data-alg="${alg.id}">
+        <div class="algo-info">
+          <h2>${alg.nome}</h2>
+          <strong>${alg.metodo}</strong>
+          <p>${alg.descricao}</p>
         </div>
-        <div class="scale" role="radiogroup" aria-label="Nota para as recomendações do ${alg.nome}">
-          ${[1, 2, 3, 4, 5].map((n) => `
-            <button class="scale-opt" type="button" role="radio" aria-checked="false" data-nota="${n}" aria-label="${n} de 5">
-              ${icon("rating-star-25")}<span>${n}</span>
-            </button>`).join("")}
+        <div class="algo-films">
+          ${(recomendacoes[alg.id] || []).map(filme).filter(Boolean).map((f) => `
+            <a class="algo-film" href="recomendado.html?id=${f[0]}&alg=${alg.id}">
+              ${poster(f)}
+              <span title="${esc(titulo(f))}">${esc(titulo(f))}</span>
+            </a>`).join("")}
         </div>
-      </div>
-    </section>`).join("");
+        <div class="algo-rating">
+          <div class="algo-question">
+            <span>Como ${alg.sigla || alg.nome} recomendou?</span>
+            <small data-estado-nota>Sem nota</small>
+          </div>
+          <div class="scale" role="radiogroup" aria-label="Nota para as recomendações do ${alg.nome}">
+            ${[1, 2, 3, 4, 5].map((n) => `
+              <button class="scale-opt" type="button" role="radio" aria-checked="false" data-nota="${n}" aria-label="${n} de 5">
+                ${icon("rating-star-25")}<span>${n}</span>
+              </button>`).join("")}
+          </div>
+        </div>
+      </section>`).join("");
+
+  } catch (erro) {
+    console.error("Erro ao carregar sugestões:", erro);
+    cards.innerHTML = blocoErro();
+    document.getElementById("btn-tentar-novamente").addEventListener("click", () => {
+      window.location.reload();
+    });
+  }
 
   const enviar = page.querySelector("[data-enviar]");
   const progresso = page.querySelector("[data-progresso]");
@@ -572,13 +738,11 @@ function initSugestoes() {
     const notas = notasAlgoritmos();
     cards.querySelectorAll(".algo-card").forEach((card) => {
       const n = notas[card.dataset.alg] || 0;
-      card.querySelectorAll(".scale-opt").forEach((b) => {
-        const v = +b.dataset.nota;
-        b.classList.toggle("on", v <= n);
-        b.setAttribute("aria-checked", v === n);
-      });
+      const opcoes = [...card.querySelectorAll(".scale-opt")];
+      pintarEstrelas(opcoes, n);
+      opcoes.forEach((b) => b.setAttribute("aria-checked", +b.dataset.nota === Math.ceil(n)));
       const estado = card.querySelector("[data-estado-nota]");
-      estado.textContent = n ? `Sua nota: ${n} de 5` : "Sem nota";
+      estado.textContent = n ? `Sua nota: ${fmt(n)} de 5` : "Sem nota";
       estado.classList.toggle("accent", !!n);
     });
     const faltando = ALGORITMOS.filter((a) => !notas[a.id]);
@@ -593,31 +757,70 @@ function initSugestoes() {
     enviar.disabled = faltando.length > 0;
     enviar.classList.toggle("btn-primary", !faltando.length);
   }
-
+  const NOTA_ALG_MIN = 1;
   cards.querySelectorAll(".algo-card").forEach((card) => {
+    const escala = card.querySelector(".scale");
     const opcoes = [...card.querySelectorAll(".scale-opt")];
-    opcoes.forEach((b) => {
-      b.addEventListener("click", () => {
-        const notas = notasAlgoritmos();
-        notas[card.dataset.alg] = +b.dataset.nota;
-        store.set("notasAlgoritmos", notas);
-        pintar();
-      });
-      b.addEventListener("mouseenter", () => opcoes.forEach((o) => o.classList.toggle("hover", +o.dataset.nota <= +b.dataset.nota)));
+    const atual = () => notasAlgoritmos()[card.dataset.alg] || 0;
+    let arrastando = false;
+    const definir = (n) => {
+      if (n === atual()) return;
+      const notas = notasAlgoritmos();
+      notas[card.dataset.alg] = n;
+      store.set("notasAlgoritmos", notas);
+      pintar();
+    };
+    const doPonteiro = (e) => notaPorPosicao(opcoes, e.clientX, NOTA_ALG_MIN);
+    escala.addEventListener("pointerdown", (e) => { if (e.button) return; arrastando = true; escala.setPointerCapture(e.pointerId); definir(doPonteiro(e)); });
+    escala.addEventListener("pointermove", (e) => {
+      if (arrastando) definir(doPonteiro(e));
+      else if (e.pointerType === "mouse") pintarEstrelas(opcoes, doPonteiro(e));
     });
-    card.querySelector(".scale").addEventListener("mouseleave", () => opcoes.forEach((o) => o.classList.remove("hover")));
+    const soltar = () => { arrastando = false; };
+    escala.addEventListener("pointerup", soltar);
+    escala.addEventListener("pointercancel", soltar);
+    escala.addEventListener("pointerleave", () => { if (!arrastando) pintarEstrelas(opcoes, atual()); });
+    opcoes.forEach((b) => b.addEventListener("click", (e) => { if (e.detail === 0) definir(+b.dataset.nota); }));
+    escala.addEventListener("keydown", (e) => {
+      const dir = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[e.key];
+      if (!dir) return;
+      e.preventDefault();
+      definir(Math.min(NOTA_MAX, Math.max(NOTA_ALG_MIN, (atual() || 0) + dir * 0.5)));
+    });
   });
 
-  enviar.addEventListener("click", () => {
+  const enviaAvaliacoes = async () => {
+
     const notas = notasAlgoritmos();
     if (ALGORITMOS.some((a) => !notas[a.id])) return;
-    // Cada envio guarda as notas dos algoritmos e os filmes avaliados nesta participação
-    const envios = store.get("envios", []);
-    envios.push({ data: new Date().toISOString(), notasAlgoritmos: notas, avaliacoes: avaliacoes(), recomendacoes: obterRecomendacoes(avaliacoes()) });
-    store.set("envios", envios);
-    store.set("notasAlgoritmos", {});
-    window.location.href = "concluido.html";
-  });
+    
+    cards.innerHTML = blocoCarregamento("avaliações");
+    
+    try{  
+
+      const payload = {
+          'avaliacoes': notas
+      };
+      const resultado = await comunicacaoApi('avaliacoes', payload);
+
+      store.set("avaliacoes", {});
+      store.set("notasAlgoritmos", {});
+      store.set("ultimaAvaliacao", '');
+
+      window.location.href = "concluido.html";
+
+    } catch (erro) {
+      console.error("Erro ao enviar as avaliações:", erro);
+      cards.innerHTML = blocoErro();
+      document.getElementById("btn-tentar-novamente").addEventListener("click", () => {
+        enviaAvaliacoes();
+      });
+    }
+
+  }
+
+  enviar.addEventListener("click", enviaAvaliacoes);
+
   pintar();
 
   if (location.hash) {
@@ -631,7 +834,7 @@ function initRecomendado() {
   const page = document.querySelector("[data-recomendado]");
   if (!page) return;
   const alg = ALGORITMOS.find((a) => a.id === param("alg")) || ALGORITMOS[0];
-  const f = filme(param("id")) || filme(obterRecomendacoes(avaliacoes())[alg.id][0]);
+  const f = filme(param("id")) || filme(recomendacoes[alg.id][0]);
   const voltar = `sugestoes.html#${alg.id}`;
   const sigla = alg.sigla || alg.nome;
   document.title = `${titulo(f)} · Recomendado por ${alg.nome} · CineMatch`;
@@ -662,24 +865,33 @@ function initAvaliados() {
     `${plural(total, "filme avaliado", "filmes avaliados")} · Suas avaliações usadas na comparação de algoritmos.`;
   const grade = page.querySelector(".rated-grid");
   const rodape = page.querySelector(".rated-pagination");
-  const paginas = Math.max(1, Math.ceil(total / POR_PAGINA_AVALIADOS));
+  const colunas = () => colunasDaGrade(rodape);
+  let porPagina = colunas() * LINHAS;
   let pagina = 1;
 
+  window.addEventListener("resize", () => {
+    const novo = colunas() * LINHAS;
+    if (novo === porPagina) return;
+    pagina = Math.floor(((pagina - 1) * porPagina) / novo) + 1;
+    render();
+  });
+
   function render() {
-    const inicio = (pagina - 1) * POR_PAGINA_AVALIADOS;
-    const visiveis = lista.slice(inicio, inicio + POR_PAGINA_AVALIADOS);
-    grade.innerHTML = total ? visiveis.map((a) => {
-      const f = filme(a.id);
-      return `
-        <a class="rated-card" href="filme.html?id=${f[0]}">
-          ${poster(f)}
-          <strong title="${esc(titulo(f))}">${esc(titulo(f))}</strong>
-          <span class="genre">${generoPrincipal(f)}</span>
-          <span class="mine" title="Avaliado em ${dataPorExtenso(a.data)}">★ Sua nota: ${fmt(a.nota)}</span>
-        </a>`;
-    }).join("") : `<p class="table-empty">Você ainda não avaliou nenhum filme. <a href="resultados.html">Avaliar filmes →</a></p>`;
+    const numColunas = colunas();
+    porPagina = numColunas * LINHAS;
+    grade.style.setProperty("--colunas", numColunas);
+    const paginas = Math.max(1, Math.ceil(total / porPagina));
+    pagina = Math.min(pagina, paginas);
+    const inicio = (pagina - 1) * porPagina;
+    const visiveis = lista.slice(inicio, inicio + porPagina);
+    grade.innerHTML = total
+      ? visiveis.map((a) => cartazResultado(filme(a.id), a)).join("")
+      : `<p class="table-empty">Você ainda não avaliou nenhum filme. <a href="resultados.html">Avaliar filmes →</a></p>`;
     rodape.hidden = !total;
-    rodape.querySelector("[data-contagem]").textContent = `${inicio + 1}–${inicio + visiveis.length} de ${plural(total, "filme", "filmes")}`;
+    const n = (v) => v.toLocaleString("pt-BR");
+    rodape.querySelector("[data-contagem]").textContent = total
+      ? `${n(inicio + 1)}–${n(inicio + visiveis.length)} de ${n(total)} ${total === 1 ? "filme" : "filmes"} · ${porPagina} por página`
+      : "";
     paginacao(rodape.querySelector(".pages-nav"), pagina, paginas, (n) => { pagina = n; render(); window.scrollTo(0, 0); });
   }
   render();

@@ -472,8 +472,14 @@ a.search-bar { color: var(--muted); font-size: 15px; }
 }
 .stars .star .icon { width: 100%; height: 100%; }
 .stars .star svg .f { fill: transparent; }
+.stars .star svg { overflow: visible; }
 .stars .star.on { color: var(--accent); }
 .stars .star.on svg .f { fill: var(--accent); }
+.stars .star { position: relative; }
+.stars .star .fill { display: none; position: absolute; inset: 0; pointer-events: none; color: var(--accent); clip-path: inset(-4px var(--resto, 100%) -4px -4px); }
+.stars .star.part .fill { display: block; }
+.stars .star .fill svg .f { fill: var(--accent); }
+.rate-block .stars { touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: pointer; }
 .stars.small { gap: 6px; }
 .stars.small .star { width: 30px; height: 30px; cursor: default; }
 .stars .value { font-size: 14px; color: var(--muted); white-space: pre; }
@@ -1151,7 +1157,7 @@ a.search-bar { color: var(--muted); font-size: 15px; }
 
 /* ---------- Resultados em grade ---------- */
 .page.results-page { padding-top: 24px; padding-bottom: 24px; gap: 16px; }
-.result-grid { display: grid; grid-template-columns: repeat(var(--colunas, 4), minmax(0, 1fr)); gap: 20px; }
+.result-grid, .rated-grid { display: grid; grid-template-columns: repeat(var(--colunas, 4), minmax(0, 1fr)); gap: 20px; }
 .result-card { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .result-card .poster { width: 100%; height: 300px; }
 .result-card h3 { font-size: 14px; font-weight: 600; line-height: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -1265,20 +1271,21 @@ a.search-bar { color: var(--muted); font-size: 15px; }
   display: flex;
   align-items: center;
   gap: 16px;
-  height: 156px;
+  height: 240px;
   padding: 12px 16px;
   background: var(--surface);
   border-radius: 12px;
   box-shadow: inset 0 0 0 1px var(--border);
   scroll-margin: 120px;
+  margin-left: 4px;
 }
-.algo-info { width: 200px; flex: none; display: flex; flex-direction: column; gap: 6px; }
+.algo-info { width: 250px; flex: none; display: flex; flex-direction: column; gap: 6px; }
 .algo-info h2 { font-size: 18px; font-weight: 600; line-height: 1.2; color: var(--accent); }
 .algo-info strong { font-size: 12px; font-weight: 600; line-height: 1.35; }
 .algo-info p { font-size: 12px; line-height: 1.45; color: var(--muted); }
 .algo-films { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
 .algo-film { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
-.algo-film .poster { width: 72px; height: 103px; transition: transform .2s; }
+.algo-film .poster { width: 140px; height: 183px; transition: transform .2s; }
 .algo-film:hover .poster { transform: translateY(-2px); }
 .algo-film .poster.placeholder { font-size: 9px; padding: 4px; }
 .algo-film .poster.placeholder .icon { display: none; }
@@ -1305,6 +1312,12 @@ a.search-bar { color: var(--muted); font-size: 15px; }
 .scale-opt span { font-size: 11px; line-height: 13px; }
 .scale-opt.on, .scale-opt.hover { color: var(--accent); }
 .scale-opt.on svg .f { fill: var(--accent); }
+.scale-opt { position: relative; }
+.scale-opt svg { overflow: visible; }
+.scale-opt .fill { display: none; position: absolute; top: 0; left: 0; width: 25px; height: 25px; pointer-events: none; color: var(--accent); clip-path: inset(-4px var(--resto, 100%) -4px -4px); }
+.scale-opt.part .fill { display: block; }
+.scale-opt .fill svg .f { fill: var(--accent); }
+.scale { touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: pointer; }
 .scale-opt.hover:not(.on) svg .f { fill: var(--accent-40); }
 .scale-opt:focus-visible { outline: 2px solid var(--accent-40); outline-offset: 2px; border-radius: 4px; }
 .compare-submit { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; }
@@ -1334,18 +1347,11 @@ a.search-bar { color: var(--muted); font-size: 15px; }
 .rating-note p { font-size: 14px; line-height: 1.5; color: var(--muted); }
 
 /* ---------- Filmes avaliados desta participação ---------- */
-.page.rated-page { padding-top: 20px; padding-bottom: 20px; gap: 16px; }
+.page.rated-page { padding-top: 24px; padding-bottom: 24px; gap: 16px; }
 .rated-page-head { display: flex; justify-content: space-between; align-items: center; gap: 24px; }
 .rated-page-head h1 { font-size: 30px; font-weight: 700; line-height: 36px; }
 .rated-page-head p { margin-top: 6px; font-size: 14px; line-height: 18px; color: var(--muted); }
 .rated-page-head .btn { font-weight: 600; }
-.rated-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
-.rated-card { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.rated-card .poster { width: 100%; height: 200px; transition: transform .2s; }
-.rated-card:hover .poster { transform: translateY(-2px); }
-.rated-card strong { font-size: 14px; font-weight: 600; line-height: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rated-card .genre { font-size: 12px; line-height: 15px; color: var(--muted); }
-.rated-card .mine { font-size: 13px; line-height: 17px; color: var(--accent); }
 .rated-grid .table-empty { grid-column: 1 / -1; border-top: 0; padding: 40px 0; text-align: center; }
 
 /* ---------- Telas menores ---------- */
@@ -1363,7 +1369,6 @@ a.search-bar { color: var(--muted); font-size: 15px; }
   .resumo-acoes { flex-wrap: wrap; }
   .result-grid, .rated-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .result-card .poster { height: auto; aspect-ratio: 273 / 300; }
-  .rated-card .poster { height: auto; aspect-ratio: 273 / 200; }
   .rated-strip-films { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .algo-films { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .page.compare-page.sem-minimo { padding-top: 48px; }
@@ -1396,3 +1401,15 @@ a.search-bar { color: var(--muted); font-size: 15px; }
   .home .trending { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); grid-auto-rows: auto; row-gap: 20px; overflow: visible; }
   .home .trending .movie-card:nth-child(n+7) { display: none; }
 }
+
+/* ---------- Bloco de erro na conexão ---------- */
+.erro { text-align: center; padding: 40px; width: 100%; }
+.erro h3 { margin-bottom: 10px; }
+.erro p { margin-bottom: 20px; color: var(--muted); }
+
+/* ---------- Bloco de carregamento ---------- */
+.carrega { text-align: center; padding: 50px; width: 100%; }
+.carrega h3 { margin-bottom: 8px; }
+.carrega p { font-size: 14px; color: var(--muted); }
+.spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-left-color: #96a9bd; border-radius: 50%; animation: spin 1s linear infinite; margin: 10px auto 20px auto; }
+@keyframes spin { 0% { transform: rotate(0deg); }100% { transform: rotate(360deg); } }

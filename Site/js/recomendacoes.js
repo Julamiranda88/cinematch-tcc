@@ -1,11 +1,14 @@
-// CineMatch — ponto de integração com os algoritmos de recomendação
+// CineMatch — ponto de integração com a api
 //
 // Os algoritmos (KNN, SVD e Redes Neurais/NCF) são implementados à parte, em Python.
-// Enquanto isso, obterRecomendacoes() devolve as listas de demonstração do Figma.
 //
-// Para integrar: faça obterRecomendacoes() devolver, para cada algoritmo, uma lista de
-// movieIds (os mesmos de movies_small.csv), da recomendação mais forte para a mais fraca.
-// Ela recebe as avaliações do participante no formato { movieId: { nota, comentario, data } }.
+// A rota 'recomendacoes' envia as avaliações do participante para a API e recebe de volta, 
+// para cada algoritmo, uma lista de movieIds.
+// Ela envia as avaliações do participante no formato {'avaliacoes': { movieId: { nota, comentario, data } }},
+// e recebe as recomendações no formato { knn: [movieId1, movieId2, ...], svd: [...], ncf: [...] }.
+//
+// A rota 'avaliacoes' envia as avaliações dos algoritmos para a API.
+// Ela envia as avaliações dos algoritmos no formato {'avaliacoes': { knn: '', svd: '', ncf: ''}}
 
 const ALGORITMOS = [
   {
@@ -32,13 +35,36 @@ const ALGORITMOS = [
   },
 ];
 
-// Listas de demonstração (A Chegada, Gravidade, Perdido em Marte, Matrix e Blade Runner 2049)
-const RECOMENDACOES_DEMO = {
-  knn: [164179, 104841, 134130, 2571, 176371],
-  svd: [134130, 164179, 104841, 176371, 2571],
-  ncf: [104841, 134130, 164179, 2571, 176371],
-};
+async function comunicacaoApi(rota, dados) {
 
-function obterRecomendacoes(avaliacoes) { // eslint-disable-line no-unused-vars
-  return RECOMENDACOES_DEMO;
+    const url = `http://77.113.59.232:8000/${rota}`;
+    
+    if (!dados || Object.keys(dados).length === 0) {
+        throw new Error("Nenhum dado fornecido.");
+    }
+
+    try {
+        const resposta = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(dados)
+        });
+
+        // Verifica se a API retornou erro (ex: 404, 500)
+        if (!resposta.ok) {
+            throw new Error(`Erro na API: ${resposta.status}`);
+        }
+
+        // Converte a resposta da API de volta para um objeto JavaScript
+        const mensagem = await resposta.json();
+        console.log("Mensagem final:", mensagem);
+        
+        return mensagem;
+
+    } catch (erro) {
+        throw new Error("Falha ao comunicar com o servidor:", erro);
+    }
+
 }
