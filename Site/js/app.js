@@ -690,8 +690,7 @@ async function initSugestoes() {
   try{  
 
     const payload = {
-      'avaliacoes': avaliacoes(),
-      'quantidade_avaliados': totalAvaliados()
+      'avaliacoes': avaliacoes()
     };
     const recomendacoes = await comunicacaoApi('recomendacoes', payload);
 
@@ -800,7 +799,8 @@ async function initSugestoes() {
     try{  
 
       const payload = {
-          'avaliacoes': notas
+          'avaliacoes': notas,
+          'quantidade_avaliados': totalAvaliados()
       };
       const resultado = await comunicacaoApi('avaliacoes', payload);
 
