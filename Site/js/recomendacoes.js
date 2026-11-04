@@ -37,11 +37,14 @@ const ALGORITMOS = [
 
 async function comunicacaoApi(rota, dados) {
 
-    const url = `http://77.113.59.232:8000/${rota}`;
+    const url = `http://18.188.166.118:8000/${rota}`;
     
     if (!dados || Object.keys(dados).length === 0) {
         throw new Error("Nenhum dado fornecido.");
     }
+
+    const controle = new AbortController();
+    const limite = setTimeout(() => controle.abort(), 30000);
 
     try {
         const resposta = await fetch(url, {
@@ -49,7 +52,8 @@ async function comunicacaoApi(rota, dados) {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(dados)
+            body: JSON.stringify(dados),
+            signal: controle.signal
         });
 
         // Verifica se a API retornou erro (ex: 404, 500)
@@ -64,7 +68,9 @@ async function comunicacaoApi(rota, dados) {
         return mensagem;
 
     } catch (erro) {
-        throw new Error("Falha ao comunicar com o servidor:", erro);
+        throw new Error("Falha ao comunicar com o servidor: " + erro.message, { cause: erro });
+    } finally {
+      clearTimeout(limite);
     }
 
 }

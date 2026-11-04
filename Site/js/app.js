@@ -110,7 +110,7 @@ function cartaoFilme(f) {
 }
 
 // ---------- Participação: filmes avaliados e notas dos algoritmos ----------
-// avaliacoes: { movieId: { nota: 1–5, comentario, data: "AAAA-MM-DDTHH:MM:SS" } }
+// avaliacoes: { movieId: { nota: 0,5–5, comentario, data: "AAAA-MM-DDTHH:MM:SS" } }
 const avaliacoes = () => store.get("avaliacoes", {});
 
 // Filmes avaliados, do mais recente para o mais antigo
@@ -140,7 +140,7 @@ function ultimaAvaliacao() {
   return recente ? { f: filme(recente.id), nota: recente.nota } : null;
 }
 
-// Notas que o participante deu às recomendações de cada algoritmo: { knn: 1–5, svd: 1–5, ncf: 1–5 }
+// Notas que o participante deu às recomendações de cada algoritmo: { knn: 0,5–5, svd: 0,5–5, ncf: 0,5–5 }
 const notasAlgoritmos = () => store.get("notasAlgoritmos", {});
 
 function dataPorExtenso(iso) {
@@ -835,7 +835,13 @@ function initRecomendado() {
   const page = document.querySelector("[data-recomendado]");
   if (!page) return;
   const alg = ALGORITMOS.find((a) => a.id === param("alg")) || ALGORITMOS[0];
-  const f = filme(param("id")) || filme(recomendacoes[alg.id][0]);
+  const f = filme(param("id"));// ||  filme(recomendacoes[alg.id][0]);
+  if (!f) {
+    const empty = page.querySelector("[data-empty]");
+    empty.hidden = false;
+    page.querySelector("[data-body]").hidden = true;
+    page.querySelector("[data-body-recomendado]").hidden = true;
+  }
   const voltar = `sugestoes.html#${alg.id}`;
   const sigla = alg.sigla || alg.nome;
   document.title = `${titulo(f)} · Recomendado por ${alg.nome} · CineMatch`;

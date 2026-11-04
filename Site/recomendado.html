@@ -17,13 +17,13 @@
   <main class="page recommended-page" data-recomendado>
     <a class="back-link accent" href="sugestoes.html" data-voltar data-voltar-link>← Voltar às sugestões</a>
 
-    <div class="page-header recommended-head">
+    <div class="page-header recommended-head" data-body-recomendado>
       <span class="badge solid-border" data-recomendado-por></span>
       <h1 class="page-title"></h1>
       <p class="page-desc" data-genero></p>
     </div>
 
-    <section class="movie-detail">
+    <section data-body class="movie-detail">
       <aside class="movie-sheet">
         <span data-poster></span>
         <span class="community" data-nota-catalogo></span>
@@ -49,6 +49,11 @@
           <a class="btn btn-primary btn-medium" href="sugestoes.html" data-voltar data-voltar-botao>Voltar às sugestões</a>
         </div>
       </div>
+    </section>
+    <section class="center-state" data-empty hidden>
+      <div class="round-symbol"><i data-icon="search-36"></i></div>
+      <h2>Não encontramos esse filme</h2>
+      <p style="width: 510px; max-width: 100%">Não há resultados para o filme solicitado.</p>
     </section>
   </main>
 
