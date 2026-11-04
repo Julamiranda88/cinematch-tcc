@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.4.2 (Python 3.14.4 on win32)" generated="2026-11-03T16:04:09.096205" rpa="false" schemaversion="5">
+<suite id="s1" name="TCC" source="C:\TCC">
+<suite id="s1-s1" name="Testes" source="C:\TCC\Testes">
+<suite id="s1-s1-s1" name="Tests" source="C:\TCC\Testes\Tests">
+<suite id="s1-s1-s1-s1" name="Filme" source="C:\TCC\Testes\Tests\Filme">
+<suite id="s1-s1-s1-s1-s1" name="AvaliacaoFilme" source="C:\TCC\Testes\Tests\Filme\AvaliacaoFilme.robot">
+<kw name="Iniciar ambiente CineMatch" owner="hooks" type="SETUP">
+<kw name="Iniciar Servidor CineMatch" owner="ServidorCineMatch">
+<msg time="2026-11-03T16:04:09.974503" level="INFO">Servidor CineMatch em http://localhost:5510 · API real (http://77.113.59.232:8000)</msg>
+<arg>${PASTA_SITE}</arg>
+<arg>${PORTA_SITE}</arg>
+<arg>${API_RECOMENDACAO}</arg>
+<arg>modo=${MODO_API}</arg>
+<arg>encaminhar_avaliacoes=${ENVIAR_AVALIACOES_PARA_API}</arg>
+<arg>timeout=${TIMEOUT_API}</arg>
+<doc>Sobe o servidor em http://localhost:&lt;porta&gt;. Se já estiver no ar, só atualiza a configuração.</doc>
+<status status="PASS" start="2026-11-03T16:04:09.957941" elapsed="0.016917"/>
+</kw>
+<kw name="Abrir Browser" owner="hooks">
+<kw name="New Browser" owner="Browser">
+<msg time="2026-11-03T16:04:09.976888" level="INFO">{"browser": "chromium", "headless": true, "args": ["--disable-dev-shm-usage", "--disable-features=Translate"], "channel": "", "chromiumSandbox": false, "devtools": false, "handleSIGHUP": true, "handleSIGINT": true, "handleSIGTERM": true, "slowMo": 0.0, "timeout": 30000.0, "tracesDir": "C:\\TCC\\results\\browser\\traces\\temp\\f2df24e0-959c-4a42-9c1d-24f39742f7da"}</msg>
+<msg time="2026-11-03T16:04:10.153619" level="INFO">Starting Browser process C:\Users\juliana.muniz\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\Browser\wrapper\index.js using at 127.0.0.1:53841</msg>
+<msg time="2026-11-03T16:04:12.685087" level="INFO">Successfully created browser with options: {"browser":"chromium","headless":true,"args":["--disable-dev-shm-usage","--disable-features=Translate"],"channel":"","chromiumSandbox":false,"devtools":false,"handleSIGHUP":true,"handleSIGINT":true,"handleSIGTERM":true,"slowMo":0,"timeout":30000,"tracesDir":"C:\\TCC\\results\\browser\\traces\\temp\\f2df24e0-959c-4a42-9c1d-24f39742f7da"}</msg>
+<arg>browser=chromium</arg>
+<arg>headless=${HEADLESS}</arg>
+<arg>channel=${CHANNEL}</arg>
+<arg>args=["--disable-dev-shm-usage","--disable-features=Translate"]</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new playwright Browser with specified options.</doc>
+<status status="PASS" start="2026-11-03T16:04:09.975890" elapsed="2.710373"/>
+</kw>
+<kw name="Set Browser Timeout" owner="Browser">
+<arg>20s</arg>
+<tag>Config</tag>
+<tag>Setter</tag>
+<doc>Sets the timeout used by most input and getter keywords.</doc>
+<status status="PASS" start="2026-11-03T16:04:12.687101" elapsed="0.006678"/>
+</kw>
+<status status="PASS" start="2026-11-03T16:04:09.975200" elapsed="2.718953"/>
+</kw>
+<status status="PASS" start="2026-11-03T16:04:09.956882" elapsed="2.737470"/>
+</kw>
+<test id="s1-s1-s1-s1-s1-t1" name="Caso de Teste 05: Cancelar edição mantém a avaliação original" line="52">
+<kw name="Iniciar sessão de novo participante" owner="hooks" type="SETUP">
+<kw name="New Context" owner="Browser">
+<msg time="2026-11-03T16:04:12.735305" level="INFO">{
+  "acceptDownloads": true,
+  "bypassCSP": false,
+  "forcedColors": "none",
+  "ignoreHTTPSErrors": false,
+  "javaScriptEnabled": true,
+  "locale": "pt-BR",
+  "offline": false,
+  "reducedMotion": "no-preference",
+  "serviceWorkers": "allow",
+  "viewport": {
+    "width": 1280,
+    "height": 832
+  }
+}</msg>
+<msg time="2026-11-03T16:04:12.753859" level="INFO">Successfully created context. </msg>
+<msg time="2026-11-03T16:04:12.754350" level="INFO">{'acceptDownloads': True, 'bypassCSP': False, 'forcedColors': 'none', 'ignoreHTTPSErrors': False, 'javaScriptEnabled': True, 'locale': 'pt-BR', 'offline': False, 'reducedMotion': 'no-preference', 'serviceWorkers': 'allow', 'viewport': {'width': 1280, 'height': 832}}</msg>
+<arg>viewport=${VIEWPORT}</arg>
+<arg>locale=pt-BR</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Create a new BrowserContext with specified options.</doc>
+<status status="PASS" start="2026-11-03T16:04:12.732816" elapsed="0.021964"/>
+</kw>
+<kw name="New Page" owner="Browser">
+<msg time="2026-11-03T16:04:18.277867" level="INFO">Successfully initialized new page object and opened url: http://localhost:5510/index.html</msg>
+<arg>${BASE_URL}/index.html</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Open a new Page.</doc>
+<status status="PASS" start="2026-11-03T16:04:12.755119" elapsed="5.523205"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2026-11-03T16:04:18.310195" level="INFO">Waited for Element with selector css=[data-resumo] [data-contagem] at state visible</msg>
+<arg>${inicioContagem_label}</arg>
+<arg>visible</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2026-11-03T16:04:18.278667" elapsed="0.031875"/>
+</kw>
+<status status="PASS" start="2026-11-03T16:04:12.731442" elapsed="5.579303"/>
+</kw>
+<kw name="Dado que o participante já tenha avaliado um filme" owner="filme">
+<kw name="Criar massa de filmes avaliados" owner="hooks">
+<kw name="Montar Avaliacoes Do Participante" owner="Participantes">
+<msg time="2026-11-03T16:04:18.313566" level="INFO">${avaliacoes} = {'2571': {'nota': 5, 'comentario': 'Mudou a forma como vejo ficção científica.', 'data': '2026-01-01T10:00:00'}}</msg>
+<var>${avaliacoes}</var>
+<arg>${participante}</arg>
+<arg>${quantidade}</arg>
+<doc>Monta o objeto de avaliações no mesmo formato que o site guarda no localStorage
+e envia à rota 'recomendacoes': { movieId: { nota, comentario, data } }.</doc>
+<status status="PASS" start="2026-11-03T16:04:18.312497" elapsed="0.001271"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2026-11-03T16:04:18.314743" level="INFO">${json} = {"2571": {"nota": 5, "comentario": "Mudou a forma como vejo fic\u00e7\u00e3o cient\u00edfica.", "data": "2026-01-01T10:00:00"}}</msg>
+<var>${json}</var>
+<arg>json.dumps($avaliacoes)</arg>
+<arg>modules=json</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2026-11-03T16:04:18.313969" elapsed="0.000941"/>
+</kw>
+<kw name="LocalStorage Set Item" owner="Browser">
+<msg time="2026-11-03T16:04:18.323134" level="INFO">JavaScript executed successfully.</msg>
+<arg>cinematch:avaliacoes</arg>
+<arg>${json}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Save data to the local storage.</doc>
+<status status="PASS" start="2026-11-03T16:04:18.315109" elapsed="0.008565"/>
+</kw>
+<kw name="Reload" owner="Browser">
+<msg time="2026-11-03T16:04:18.937445" level="INFO">Reloaded page with options: {"waitUntil": "load"}</msg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Reloads current active page.</doc>
+<status status="PASS" start="2026-11-03T16:04:18.324058" elapsed="0.614168"/>
+</kw>
+<return>
+<value>${avaliacoes}</value>
+<status status="PASS" start="2026-11-03T16:04:18.938390" elapsed="0.000665"/>
+</return>
+<arg>participante01</arg>
+<arg>1</arg>
+<status status="PASS" start="2026-11-03T16:04:18.311883" elapsed="0.627488"/>
+</kw>
+<kw name="Abrir página do filme" owner="filme">
+<kw name="Acessar tela" owner="hooks">
+<kw name="Go To" owner="Browser">
+<msg time="2026-11-03T16:04:20.216681" level="INFO">Successfully opened URL http://localhost:5510/filme.html?id=2571</msg>
+<arg>${BASE_URL}/${pagina}</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Navigates to the given ``url``.</doc>
+<status status="PASS" start="2026-11-03T16:04:18.941375" elapsed="1.275623"/>
+</kw>
+<arg>filme.html?id=${movieId}</arg>
+<status status="PASS" start="2026-11-03T16:04:18.940724" elapsed="1.276451"/>
+</kw>
+<kw name="Obter Titulo Do Filme" owner="Catalogo">
+<msg time="2026-11-03T16:04:20.257149" level="INFO">${titulo} = Matrix</msg>
+<var>${titulo}</var>
+<arg>${movieId}</arg>
+<status status="PASS" start="2026-11-03T16:04:20.217361" elapsed="0.040062"/>
+</kw>
+<kw name="Get Text" owner="Browser">
+<msg time="2026-11-03T16:04:20.291312" level="INFO">Text: 'Matrix'</msg>
+<arg>${filmeTitulo_label}</arg>
+<arg>==</arg>
+<arg>${titulo}</arg>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns text attribute of the element found by ``selector``.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.257679" elapsed="0.033910"/>
+</kw>
+<arg>2571</arg>
+<status status="PASS" start="2026-11-03T16:04:18.939962" elapsed="1.351806"/>
+</kw>
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2026-11-03T16:04:20.296903" level="INFO">Waited for Element with selector css=[data-modo-avaliado] at state visible</msg>
+<arg>${filmeAvaliado_area}</arg>
+<arg>visible</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.291964" elapsed="0.005282"/>
+</kw>
+<status status="PASS" start="2026-11-03T16:04:18.311140" elapsed="1.986286"/>
+</kw>
+<kw name="Quando desistir da edição da avaliação" owner="filme">
+<kw name="Click" owner="Browser">
+<msg time="2026-11-03T16:04:20.299891" level="INFO">Clicks the element 'css=[data-modo-avaliado] [data-editar]'.</msg>
+<arg>${filmeEditar_Button}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.299193" elapsed="0.050395"/>
+</kw>
+<kw name="Ajustar nota do filme" owner="filme">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2026-11-03T16:04:20.351494" level="INFO">${passos} = -8</msg>
+<var>${passos}</var>
+<arg>int(round((float($notaNova) - float($notaAtual)) * 2))</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.350752" elapsed="0.000942"/>
+</kw>
+<kw name="Set Variable If" owner="BuiltIn">
+<msg time="2026-11-03T16:04:20.352755" level="INFO">${tecla} = ArrowLeft</msg>
+<var>${tecla}</var>
+<arg>${passos} &gt;= 0</arg>
+<arg>ArrowRight</arg>
+<arg>ArrowLeft</arg>
+<doc>Sets variable based on the given condition.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.351901" elapsed="0.001091"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2026-11-03T16:04:20.353870" level="INFO">@{teclas} = [ ArrowLeft | ArrowLeft | ArrowLeft | ArrowLeft | ArrowLeft | ArrowLeft | ArrowLeft | ArrowLeft ]</msg>
+<var>@{teclas}</var>
+<arg>[$tecla] * abs($passos)</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.353210" elapsed="0.000831"/>
+</kw>
+<kw name="Press Keys" owner="Browser">
+<arg>${filmeEstrela_Button}</arg>
+<arg>@{teclas}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Types the given key combination into element found by ``selector``.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.354236" elapsed="0.043425"/>
+</kw>
+<kw name="Formatar nota" owner="hooks">
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2026-11-03T16:04:20.399480" level="INFO">${texto} = 1,0</msg>
+<var>${texto}</var>
+<arg>f"{float($nota):.1f}".replace(".", ",")</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.398833" elapsed="0.000825"/>
+</kw>
+<return>
+<value>${texto}</value>
+<status status="PASS" start="2026-11-03T16:04:20.399778" elapsed="0.000304"/>
+</return>
+<msg time="2026-11-03T16:04:20.400226" level="INFO">${notaFormatada} = 1,0</msg>
+<var>${notaFormatada}</var>
+<arg>${notaNova}</arg>
+<doc>Mesmo formato do site: 4.5 → "4,5" e 5 → "5,0"</doc>
+<status status="PASS" start="2026-11-03T16:04:20.398011" elapsed="0.002620"/>
+</kw>
+<kw name="Get Text" owner="Browser">
+<msg time="2026-11-03T16:04:20.411868" level="INFO">Text: '  1,0'</msg>
+<arg>${filmeNotaValor_label}</arg>
+<arg>validate</arg>
+<arg>value.strip() == "${notaFormatada}"</arg>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns text attribute of the element found by ``selector``.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.400932" elapsed="0.011229"/>
+</kw>
+<arg>5</arg>
+<arg>1</arg>
+<doc>Parte da nota já preenchida (modo edição) e chega à nota nova com as setas.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.349924" elapsed="0.062417"/>
+</kw>
+<kw name="Click" owner="Browser">
+<msg time="2026-11-03T16:04:20.413391" level="INFO">Clicks the element 'css=form[data-rating] .actions a'.</msg>
+<arg>${filmeCancelar_Button}</arg>
+<tag>PageContent</tag>
+<tag>Setter</tag>
+<doc>Simulates mouse click on the element found by ``selector``.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.412526" elapsed="0.032667"/>
+</kw>
+<status status="PASS" start="2026-11-03T16:04:20.298237" elapsed="0.147159"/>
+</kw>
+<kw name="Então a avaliação original deverá ser mantida" owner="filme">
+<kw name="Wait For Elements State" owner="Browser">
+<msg time="2026-11-03T16:04:20.450985" level="INFO">Waited for Element with selector css=[data-modo-avaliado] at state visible</msg>
+<arg>${filmeAvaliado_area}</arg>
+<arg>visible</arg>
+<tag>PageContent</tag>
+<tag>Wait</tag>
+<doc>Waits for the element found by ``selector`` to satisfy state option.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.446593" elapsed="0.004930"/>
+</kw>
+<kw name="Get Text" owner="Browser">
+<msg time="2026-11-03T16:04:20.462383" level="INFO">Text: '5,0 / 5'</msg>
+<arg>${filmeNotaRegistrada_label}</arg>
+<arg>==</arg>
+<arg>5,0 / 5</arg>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Returns text attribute of the element found by ``selector``.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.451828" elapsed="0.010900"/>
+</kw>
+<kw name="Obter avaliações guardadas no navegador" owner="hooks">
+<kw name="LocalStorage Get Item" owner="Browser">
+<msg time="2026-11-03T16:04:20.467875" level="INFO">JavaScript executed successfully.</msg>
+<msg time="2026-11-03T16:04:20.468225" level="INFO">${json} = {"2571": {"nota": 5, "comentario": "Mudou a forma como vejo fic\u00e7\u00e3o cient\u00edfica.", "data": "2026-01-01T10:00:00"}}</msg>
+<var>${json}</var>
+<arg>cinematch:avaliacoes</arg>
+<tag>Assertion</tag>
+<tag>Getter</tag>
+<tag>PageContent</tag>
+<doc>Get saved data from the local storage.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.463835" elapsed="0.004668"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2026-11-03T16:04:20.469766" level="INFO">${avaliacoes} = {'2571': {'nota': 5, 'comentario': 'Mudou a forma como vejo ficção científica.', 'data': '2026-01-01T10:00:00'}}</msg>
+<var>${avaliacoes}</var>
+<arg>json.loads($json) if $json else {}</arg>
+<arg>modules=json</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.468779" elapsed="0.001348"/>
+</kw>
+<return>
+<value>${avaliacoes}</value>
+<status status="PASS" start="2026-11-03T16:04:20.470337" elapsed="0.000544"/>
+</return>
+<msg time="2026-11-03T16:04:20.471081" level="INFO">${avaliacoes} = {'2571': {'nota': 5, 'comentario': 'Mudou a forma como vejo ficção científica.', 'data': '2026-01-01T10:00:00'}}</msg>
+<var>${avaliacoes}</var>
+<status status="PASS" start="2026-11-03T16:04:20.463035" elapsed="0.008346"/>
+</kw>
+<kw name="Should Be Equal As Numbers" owner="BuiltIn">
+<msg time="2026-11-03T16:04:20.472666" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${avaliacoes}[2571][nota]</arg>
+<arg>5</arg>
+<doc>Fails if objects are unequal after converting them to real numbers.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.471731" elapsed="0.001320"/>
+</kw>
+<status status="PASS" start="2026-11-03T16:04:20.445799" elapsed="0.027437"/>
+</kw>
+<kw name="Encerrar sessão do participante" owner="hooks" type="TEARDOWN">
+<kw name="Run Keyword If Test Failed" owner="BuiltIn">
+<arg>Registrar evidência</arg>
+<arg>falha</arg>
+<doc>Runs the given keyword with the given arguments, if the test failed.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.475227" elapsed="0.000571"/>
+</kw>
+<kw name="Close Context" owner="Browser">
+<msg time="2026-11-03T16:04:20.478334" level="INFO">Switching browser to CURRENT</msg>
+<msg time="2026-11-03T16:04:20.480484" level="INFO">Returned active browser id. CURRENT</msg>
+<msg time="2026-11-03T16:04:20.482222" level="INFO">Switching context to CURRENT in CURRENT</msg>
+<msg time="2026-11-03T16:04:20.486061" level="INFO">Returned active context id: CURRENT</msg>
+<msg time="2026-11-03T16:04:20.486565" level="INFO">Switching context to context=37544f9f-682f-4c0c-9073-c685985d2a5f in CURRENT</msg>
+<msg time="2026-11-03T16:04:20.491994" level="INFO">Successfully changed active context: context=37544f9f-682f-4c0c-9073-c685985d2a5f</msg>
+<msg time="2026-11-03T16:04:20.498949" level="INFO">Successfully closed Context</msg>
+<arg>CURRENT</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes a Context.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.475990" elapsed="0.023489"/>
+</kw>
+<status status="PASS" start="2026-11-03T16:04:20.474322" elapsed="0.025372"/>
+</kw>
+<doc>Mudar a nota e clicar em Cancelar não altera o que foi registrado.</doc>
+<tag>CT05_FilmeCancelarEdicao</tag>
+<status status="PASS" start="2026-11-03T16:04:12.694535" elapsed="7.805584"/>
+</test>
+<kw name="Encerrar ambiente CineMatch" owner="hooks" type="TEARDOWN">
+<kw name="Fechar Browser" owner="hooks">
+<kw name="Close Browser" owner="Browser">
+<msg time="2026-11-03T16:04:20.600305" level="INFO">Closed all browsers</msg>
+<arg>ALL</arg>
+<tag>BrowserControl</tag>
+<tag>Setter</tag>
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2026-11-03T16:04:20.513712" elapsed="0.087084"/>
+</kw>
+<status status="PASS" start="2026-11-03T16:04:20.512901" elapsed="0.088092"/>
+</kw>
+<kw name="Parar Servidor CineMatch" owner="ServidorCineMatch">
+<status status="PASS" start="2026-11-03T16:04:20.601163" elapsed="0.005020"/>
+</kw>
+<status status="PASS" start="2026-11-03T16:04:20.511808" elapsed="0.094635"/>
+</kw>
+<doc>Testes da avaliação de filmes: nota, comentário, edição e liberação das sugestões</doc>
+<status status="PASS" start="2026-11-03T16:04:09.183139" elapsed="11.423394"/>
+</suite>
+<status status="PASS" start="2026-11-03T16:04:09.176047" elapsed="11.438596"/>
+</suite>
+<status status="PASS" start="2026-11-03T16:04:09.166445" elapsed="11.452600"/>
+</suite>
+<status status="PASS" start="2026-11-03T16:04:09.160598" elapsed="11.466214"/>
+</suite>
+<status status="PASS" start="2026-11-03T16:04:09.128009" elapsed="11.502424"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0" skip="0">CT05_FilmeCancelarEdicao</stat>
+</tag>
+<suite>
+<stat name="TCC" id="s1" pass="1" fail="0" skip="0">TCC</stat>
+<stat name="Testes" id="s1-s1" pass="1" fail="0" skip="0">TCC.Testes</stat>
+<stat name="Tests" id="s1-s1-s1" pass="1" fail="0" skip="0">TCC.Testes.Tests</stat>
+<stat name="Filme" id="s1-s1-s1-s1" pass="1" fail="0" skip="0">TCC.Testes.Tests.Filme</stat>
+<stat name="AvaliacaoFilme" id="s1-s1-s1-s1-s1" pass="1" fail="0" skip="0">TCC.Testes.Tests.Filme.AvaliacaoFilme</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

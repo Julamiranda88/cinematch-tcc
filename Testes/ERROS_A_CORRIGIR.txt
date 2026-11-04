@@ -1,0 +1,259 @@
+CINEMATCH - ERROS A CORRIGIR
+Levantamento feito pelos testes automatizados (Testes/) em 03/11/2026
+=====================================================================
+
+Resumo
+------
+A interface do site passou em todos os 26 casos de teste de tela.
+Os problemas encontrados estão na API de recomendação e em como o site lida
+com ela quando a API demora ou falha.
+
+  Prioridade  Onde   Erro
+  ----------  -----  ------------------------------------------------------------
+  1 (Alta)    API    Erro 500 para o participante de faroeste
+  2 (Alta)    API    API trava com poucas avaliações (0, 1 ou 4 filmes)
+  3 (Alta)    API    API fica lenta/sem resposta após requisições travadas
+  4 (Média)   API    KNN devolve menos de 5 recomendações
+  5 (Alta)    Site   Sem tempo limite: "Processando recomendações..." infinito
+  6 (Alta)    Site   API em http é bloqueada no site publicado em https
+  7 (Baixa)   Site   Erro original da API é perdido na mensagem de falha
+  8 (Baixa)   Site   recomendado.html quebra quando aberto sem ?id=
+  9 (Baixa)   Textos Escala de nota dos algoritmos inconsistente (0,5 x 1)
+
+
+=====================================================================
+ERROS NA API DE RECOMENDAÇÃO  (http://77.113.59.232:8000)
+=====================================================================
+
+1. ERRO 500 PARA O PARTICIPANTE DE FAROESTE
+-------------------------------------------
+O que acontece:
+  A rota /recomendacoes responde "500 INTERNAL SERVER ERROR" para as
+  avaliações abaixo. O erro se repetiu em todas as chamadas.
+
+  Filmes avaliados (movieId: nota):
+    590   Dança com Lobos              4
+    1201  Três Homens em Conflito      5
+    99114 Django Livre                 4.5
+    553   Tombstone                    3.5
+    3671  Banzé no Oeste               3
+
+Como reproduzir:
+  curl -X POST http://77.113.59.232:8000/recomendacoes ^
+    -H "Content-Type: application/json" ^
+    -d "{\"avaliacoes\":{\"590\":{\"nota\":4,\"comentario\":\"\",\"data\":\"2026-01-01T10:00:00\"},\"1201\":{\"nota\":5,\"comentario\":\"\",\"data\":\"2026-01-01T10:00:00\"},\"99114\":{\"nota\":4.5,\"comentario\":\"\",\"data\":\"2026-01-01T10:00:00\"},\"553\":{\"nota\":3.5,\"comentario\":\"\",\"data\":\"2026-01-01T10:00:00\"},\"3671\":{\"nota\":3,\"comentario\":\"\",\"data\":\"2026-01-01T10:00:00\"}}}"
+
+Esperado:  200 com as listas de knn, svd e ncf.
+Obtido:    500.
+
+Efeito no site: o participante vê "Ops! Ocorreu um erro" e não consegue
+  concluir a participação.
+
+Onde investigar:
+  O log de erro da API (traceback) mostra a causa. Suspeita: algum desses
+  filmes (provavelmente 99114 - Django Livre, de 2012) não existe na matriz
+  ou no mapeamento de índices de algum dos modelos, e a busca pelo índice
+  lança exceção (KeyError/IndexError).
+
+Correção sugerida:
+  - Ignorar filmes que o modelo não conhece em vez de falhar.
+  - Tratar exceções por algoritmo: se um algoritmo falhar, os outros ainda
+    devem responder.
+  - Nunca devolver 500 sem registrar o traceback no log.
+
+Teste que detecta: Tests/API/ApiRecomendacao.robot (CT02, CT03, CT07)
+                   Tests/Participacao/Participacao10Usuarios.robot
+
+
+2. API TRAVA COM POUCAS AVALIAÇÕES
+----------------------------------
+O que acontece:
+  A rota /recomendacoes não responde (nem com erro) em mais de 20 segundos
+  quando recebe:
+    - {"avaliacoes": {}}           (nenhuma avaliação)
+    - {}                           (sem a chave "avaliacoes")
+    - 1 filme avaliado
+    - 4 filmes avaliados (observado ao remover um filme do perfil de faroeste)
+
+Esperado:
+  Resposta rápida. Para entrada inválida, um erro 400 com mensagem clara
+  (ex.: "São necessárias pelo menos 5 avaliações"). Para entrada válida
+  com poucos filmes, as recomendações possíveis.
+
+Obtido:
+  A requisição fica aberta até o cliente desistir.
+
+Onde investigar:
+  Provavelmente um laço que procura vizinhos/filmes até atingir uma
+  quantidade fixa (ex.: "while len(recomendados) < 5") e nunca termina
+  quando não há dados suficientes.
+
+Correção sugerida:
+  - Validar a entrada no início da rota: "avaliacoes" precisa existir, ser
+    um objeto e ter pelo menos 5 itens; senão, responder 400.
+  - Todo laço de busca precisa ter limite de iterações.
+  - Opcional: tempo máximo de processamento por requisição.
+
+Observação: o site exige 5 filmes antes de chamar a API, mas a API não pode
+  depender disso. Qualquer cliente (ou um localStorage alterado) pode enviar
+  menos.
+
+Teste que detecta: Tests/API/ApiRecomendacao.robot (CT06, tag "robustez")
+
+
+3. API FICA LENTA OU SEM RESPOSTA DEPOIS DE REQUISIÇÕES TRAVADAS
+-----------------------------------------------------------------
+O que acontece:
+  Depois das requisições do erro 2, chamadas que antes respondiam em 0,5 s
+  passaram a dar timeout de forma intermitente (o mesmo perfil ora responde,
+  ora não). No teste com 10 participantes, 6 esperaram 60 s pelas
+  recomendações sem resposta.
+
+  Atenção: parte dessa carga foi gerada pelos próprios testes de
+  investigação (requisições com 0, 1 e 4 filmes que ficaram presas). Mesmo
+  assim, o problema é da API: poucas requisições inválidas não deveriam
+  derrubar o atendimento dos participantes reais.
+
+Correção sugerida:
+  - Corrigir o erro 2 (é a causa provável).
+  - Rodar a API com mais de um worker e tempo limite por requisição
+    (ex.: gunicorn --workers 2 --timeout 30, ou equivalente).
+  - Reiniciar a API antes da próxima rodada de testes.
+
+
+4. KNN DEVOLVE MENOS DE 5 RECOMENDAÇÕES
+---------------------------------------
+O que acontece:
+  O README diz que cada algoritmo devolve o top 5. SVD e NCF sempre
+  devolveram 5; o KNN não:
+
+    Perfil                          KNN devolveu
+    Crime (858, 296, 50, 1089, 47)  3 filmes  [79132, 1617, 628]
+    Guerra (527, 2028, 1208, 1222, 110)  1 filme  [1233]
+    Perfil misto (1, 260, 296, 318, 356)  2 filmes  [608, 500]
+
+Efeito no site: o card do KNN aparece com 1 a 3 pôsteres, ao lado de 5 do
+  SVD e do NCF. Isso prejudica a comparação justa entre os algoritmos, que é
+  o objetivo da pesquisa.
+
+Onde investigar:
+  Os vizinhos encontrados provavelmente só avaliaram filmes que o participante
+  já viu, ou o filtro de nota mínima/quantidade de vizinhos (k) é restritivo
+  demais, e o algoritmo não completa a lista.
+
+Correção sugerida:
+  - Aumentar k ou buscar mais vizinhos até completar 5 filmes não vistos.
+  - Se ainda faltar, completar com os filmes mais bem avaliados/populares
+    que o participante não viu (fallback), registrando isso para a análise.
+
+Teste que detecta: Tests/API/ApiRecomendacao.robot (CT02)
+
+
+=====================================================================
+ERROS NO SITE  (Site/)
+=====================================================================
+
+5. SEM TEMPO LIMITE NA CHAMADA À API
+------------------------------------
+Arquivo: Site/js/recomendacoes.js, função comunicacaoApi
+
+O que acontece:
+  O fetch não tem tempo limite. Se a API travar (erros 2 e 3), a tela de
+  sugestões fica para sempre em "Processando recomendações..." e o botão
+  "Tentar novamente" nunca aparece. O participante não sabe o que fazer.
+
+Correção sugerida:
+  Usar AbortController, por exemplo 30 segundos:
+
+    const controle = new AbortController();
+    const limite = setTimeout(() => controle.abort(), 30000);
+    try {
+      const resposta = await fetch(url, { ..., signal: controle.signal });
+      ...
+    } finally {
+      clearTimeout(limite);
+    }
+
+  Assim o erro cai no catch e a tela mostra "Tentar novamente".
+
+
+6. API EM HTTP BLOQUEADA NO SITE PUBLICADO EM HTTPS
+---------------------------------------------------
+Arquivo: Site/js/recomendacoes.js (const url = `http://77.113.59.232:8000/...`)
+
+O que acontece:
+  O site é publicado no GitHub Pages (.github/workflows/pages.yml), que usa
+  https. Os navegadores bloqueiam chamadas http a partir de páginas https
+  (conteúdo misto). Nesse cenário, a aba Sugestões sempre mostra erro para
+  os participantes. O próprio README já avisa sobre isso.
+
+  Não foi testado no endereço publicado: os testes sobem o site localmente
+  em http. Confirme abrindo o site do GitHub Pages e a aba Sugestões.
+
+Correção sugerida:
+  Publicar a API com https (domínio próprio com certificado, ou um proxy
+  reverso/túnel com https) e trocar a URL em comunicacaoApi.
+
+
+7. ERRO ORIGINAL DA API É PERDIDO
+---------------------------------
+Arquivo: Site/js/recomendacoes.js
+
+O que acontece:
+  throw new Error("Falha ao comunicar com o servidor:", erro);
+  O segundo parâmetro de Error não é concatenado à mensagem, então o motivo
+  real (ex.: "Erro na API: 500") some do console. Isso dificultou
+  diagnosticar o erro 1.
+
+Correção sugerida:
+  throw new Error("Falha ao comunicar com o servidor: " + erro.message, { cause: erro });
+
+
+8. recomendado.html QUEBRA QUANDO ABERTO SEM ?id=
+-------------------------------------------------
+Arquivo: Site/js/app.js, função initRecomendado
+
+O que acontece:
+  const f = filme(param("id")) || filme(recomendacoes[alg.id][0]);
+  A variável "recomendacoes" não existe nessa página (as recomendações só
+  existem dentro de initSugestoes). Abrindo recomendado.html sem id (ou com
+  um id inválido), o script lança ReferenceError e a página fica vazia.
+  Pelo fluxo normal o id sempre vem no link, então o impacto é baixo.
+
+Correção sugerida:
+  Se não houver filme válido, redirecionar para sugestoes.html em vez de
+  usar "recomendacoes".
+
+
+=====================================================================
+INCONSISTÊNCIA DE TEXTOS
+=====================================================================
+
+9. ESCALA DA NOTA DOS ALGORITMOS
+--------------------------------
+  - README: "dá de 0.5 a 5 estrelas às recomendações de cada um".
+  - Código (app.js): NOTA_ALG_MIN = 1, ou seja, a nota do algoritmo vai de 1 a 5.
+  - index.html, sobre.html e filme.html: "de 1 a 5 estrelas".
+  - sobre.html cita "SVD/ALS" no card "Compare sugestões"; o resto do site diz só "SVD".
+
+Correção sugerida:
+  Decidir a escala (o código usa 1 a 5) e alinhar o README. Trocar
+  "SVD/ALS" por "SVD" em sobre.html.
+
+
+=====================================================================
+COMO CONFERIR AS CORREÇÕES
+=====================================================================
+A partir de C:\TCC:
+
+  # API (contrato, validade, personalização, tempo de resposta)
+  python -m robot -d ./Testes/logs Testes/Tests/API
+
+  # Processo principal com os 10 participantes
+  python -m robot -d ./Testes/logs Testes/Tests/Participacao
+
+Critério: nenhum teste com FAIL em Testes/logs/report.html. Depois de
+corrigir o erro 2, inclua também o teste de robustez (ele é excluído só no
+runTests.ps1):
+
+  python -m robot --include robustez -d ./Testes/logs Testes/Tests/API

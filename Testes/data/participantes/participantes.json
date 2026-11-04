@@ -1,0 +1,123 @@
+{
+  "participante01": {
+    "nome": "Ana",
+    "perfil": "Ficção científica",
+    "filmes": [
+      {"id": 2571, "busca": "Matrix", "nota": 5, "comentario": "Mudou a forma como vejo ficção científica."},
+      {"id": 260, "busca": "Guerra nas Estrelas", "nota": 4.5, "comentario": ""},
+      {"id": 1196, "busca": "Império Contra-Ataca", "nota": 5, "comentario": "O melhor da trilogia."},
+      {"id": 589, "busca": "Exterminador do Futuro 2", "nota": 4, "comentario": ""},
+      {"id": 32, "busca": "12 Macacos", "nota": 3.5, "comentario": ""}
+    ],
+    "notasAlgoritmos": {"knn": 4.5, "svd": 3, "ncf": 5}
+  },
+  "participante02": {
+    "nome": "Bruno",
+    "perfil": "Animação",
+    "filmes": [
+      {"id": 1, "busca": "Toy Story", "nota": 5, "comentario": "Clássico da infância."},
+      {"id": 588, "busca": "Aladdin", "nota": 4, "comentario": ""},
+      {"id": 364, "busca": "Rei Leão", "nota": 4.5, "comentario": ""},
+      {"id": 4306, "busca": "Shrek", "nota": 4, "comentario": ""},
+      {"id": 6377, "busca": "Procurando Nemo", "nota": 5, "comentario": ""}
+    ],
+    "notasAlgoritmos": {"knn": 4, "svd": 4.5, "ncf": 3.5}
+  },
+  "participante03": {
+    "nome": "Carla",
+    "perfil": "Terror",
+    "filmes": [
+      {"id": 1214, "busca": "Alien Oitavo Passageiro", "nota": 4.5, "comentario": ""},
+      {"id": 1258, "busca": "Iluminado", "nota": 5, "comentario": "Kubrick no auge."},
+      {"id": 1219, "busca": "Psicose", "nota": 4, "comentario": ""},
+      {"id": 2762, "busca": "Sexto Sentido", "nota": 4.5, "comentario": ""},
+      {"id": 1387, "busca": "Tubarão", "nota": 3.5, "comentario": ""}
+    ],
+    "notasAlgoritmos": {"knn": 2, "svd": 3.5, "ncf": 4}
+  },
+  "participante04": {
+    "nome": "Diego",
+    "perfil": "Crime",
+    "filmes": [
+      {"id": 858, "busca": "Poderoso Chefão", "nota": 5, "comentario": ""},
+      {"id": 296, "busca": "Pulp Fiction", "nota": 4.5, "comentario": "Diálogos impecáveis."},
+      {"id": 50, "busca": "Os Suspeitos", "nota": 4, "comentario": ""},
+      {"id": 1089, "busca": "Cães de Aluguel", "nota": 4.5, "comentario": ""},
+      {"id": 47, "busca": "Seven Sete Crimes", "nota": 4, "comentario": ""}
+    ],
+    "notasAlgoritmos": {"knn": 5, "svd": 4, "ncf": 4.5}
+  },
+  "participante05": {
+    "nome": "Elisa",
+    "perfil": "Romance",
+    "filmes": [
+      {"id": 2858, "busca": "Beleza Americana", "nota": 3.5, "comentario": ""},
+      {"id": 1265, "busca": "Feitiço do Tempo", "nota": 4.5, "comentario": ""},
+      {"id": 1704, "busca": "Gênio Indomável", "nota": 4, "comentario": ""},
+      {"id": 1197, "busca": "Princesa Prometida", "nota": 5, "comentario": "Divertido e romântico."},
+      {"id": 356, "busca": "Forrest Gump", "nota": 5, "comentario": ""}
+    ],
+    "notasAlgoritmos": {"knn": 3, "svd": 3, "ncf": 2.5}
+  },
+  "participante06": {
+    "nome": "Felipe",
+    "perfil": "Guerra",
+    "filmes": [
+      {"id": 527, "busca": "Lista de Schindler", "nota": 5, "comentario": ""},
+      {"id": 2028, "busca": "Resgate do Soldado Ryan", "nota": 4.5, "comentario": ""},
+      {"id": 1208, "busca": "Apocalypse Now", "nota": 4, "comentario": ""},
+      {"id": 1222, "busca": "Nascido Para Matar", "nota": 4, "comentario": ""},
+      {"id": 110, "busca": "Coração Valente", "nota": 3, "comentario": "Longo demais."}
+    ],
+    "notasAlgoritmos": {"knn": 3.5, "svd": 5, "ncf": 4}
+  },
+  "participante07": {
+    "nome": "Gabriela",
+    "perfil": "Fantasia",
+    "filmes": [
+      {"id": 4993, "busca": "Sociedade do Anel", "nota": 5, "comentario": ""},
+      {"id": 5952, "busca": "As Duas Torres", "nota": 4.5, "comentario": ""},
+      {"id": 7153, "busca": "Retorno do Rei", "nota": 5, "comentario": "Final perfeito."},
+      {"id": 6539, "busca": "Maldição do Pérola Negra", "nota": 3.5, "comentario": ""},
+      {"id": 919, "busca": "Mágico de Oz", "nota": 4, "comentario": ""}
+    ],
+    "notasAlgoritmos": {"knn": 4, "svd": 2.5, "ncf": 3}
+  },
+  "participante08": {
+    "nome": "Henrique",
+    "perfil": "Faroeste",
+    "filmes": [
+      {"id": 590, "busca": "Dança com Lobos", "nota": 4, "comentario": ""},
+      {"id": 1201, "busca": "Três Homens em Conflito", "nota": 5, "comentario": "Trilha sonora inesquecível."},
+      {"id": 99114, "busca": "Django Livre", "nota": 4.5, "comentario": ""},
+      {"id": 553, "busca": "Tombstone", "nota": 3.5, "comentario": ""},
+      {"id": 3671, "busca": "Banzé no Oeste", "nota": 3, "comentario": ""}
+    ],
+    "notasAlgoritmos": {"knn": 1.5, "svd": 2, "ncf": 3.5}
+  },
+  "participante09": {
+    "nome": "Isabela",
+    "perfil": "Documentário",
+    "filmes": [
+      {"id": 5669, "busca": "Tiros em Columbine", "nota": 4, "comentario": ""},
+      {"id": 8464, "busca": "Super Size Me", "nota": 3.5, "comentario": ""},
+      {"id": 34072, "busca": "Marcha dos Pinguins", "nota": 4.5, "comentario": ""},
+      {"id": 2064, "busca": "Roger e Eu", "nota": 3, "comentario": ""},
+      {"id": 8622, "busca": "Fahrenheit 11 de Setembro", "nota": 4, "comentario": "Polêmico, mas necessário."}
+    ],
+    "notasAlgoritmos": {"knn": 2.5, "svd": 3.5, "ncf": 3}
+  },
+  "participante10": {
+    "nome": "João",
+    "perfil": "Eclético, notas baixas e acima do mínimo",
+    "filmes": [
+      {"id": 480, "busca": "Jurassic Park", "nota": 2, "comentario": ""},
+      {"id": 780, "busca": "Independence Day", "nota": 1.5, "comentario": "Não envelheceu bem."},
+      {"id": 1580, "busca": "Homens de Preto", "nota": 2.5, "comentario": ""},
+      {"id": 367, "busca": "O Máskara", "nota": 1, "comentario": ""},
+      {"id": 1270, "busca": "De Volta para o Futuro", "nota": 3, "comentario": ""},
+      {"id": 457, "busca": "O Fugitivo", "nota": 0.5, "comentario": ""}
+    ],
+    "notasAlgoritmos": {"knn": 1, "svd": 5, "ncf": 2}
+  }
+}

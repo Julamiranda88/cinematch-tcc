@@ -18,3 +18,7 @@ Backup/
 
 # Configurações locais do Claude Code
 .claude/
+
+# Resultados dos testes automatizados
+Testes/logs/
+Testes/**/__pycache__/

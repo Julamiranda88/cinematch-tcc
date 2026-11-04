@@ -35,10 +35,18 @@ const ALGORITMOS = [
   },
 ];
 
+// Endereços da API
+// - No site publicado (https), o navegador bloqueia chamadas para http. Por isso ele fala com o
+//   Worker da Cloudflare (https), que repassa para a API. Código do Worker: cloudflare-worker/worker.js
+// - Aberto no computador (arquivo ou localhost, em http), o site chama a API direto.
+const API_WORKER = "https://cinematch-api.julianasbaur.workers.dev";
+const API_DIRETA = "http://18.188.166.118:8000";
+const API_URL = location.protocol === "https:" ? API_WORKER : API_DIRETA;
+
 async function comunicacaoApi(rota, dados) {
 
-    const url = `http://18.188.166.118:8000/${rota}`;
-    
+    const url = `${API_URL}/${rota}`;
+
     if (!dados || Object.keys(dados).length === 0) {
         throw new Error("Nenhum dado fornecido.");
     }
